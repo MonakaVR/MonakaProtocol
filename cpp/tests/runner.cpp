@@ -48,10 +48,14 @@ int main(int argc,char** argv) {
     std::ifstream f(argv[1],std::ios::binary);
     if(!f) return 2;
     std::string bytes((std::istreambuf_iterator<char>(f)),{});
-    Envelope out=MtpTrackerState{}; Error e;
+    MtpTrackerState sentinel; sentinel.source_id="unchanged sentinel";
+    Envelope out=sentinel; Error e;
     if(!DecodeEnvelope(reinterpret_cast<const uint8_t*>(bytes.data()),bytes.size(),out,e)) {
-        check(std::holds_alternative<MtpTrackerState>(out));
+        check(std::holds_alternative<MtpTrackerState>(out) && std::get<MtpTrackerState>(out).source_id==sentinel.source_id);
         std::cout<<"ERROR:"<<ErrorCodeName(e.code)<<"\n"; return 0;
+    }
+    if(argc==3 && std::string(argv[2])=="--version-minor") {
+        std::cout<<std::visit([](const auto& v) { return v.version.minor; },out)<<"\n"; return 0;
     }
     std::string encoded;
     if(!EncodeEnvelope(out,encoded,e)) { std::cout<<"ERROR:"<<ErrorCodeName(e.code)<<"\n"; return 0; }

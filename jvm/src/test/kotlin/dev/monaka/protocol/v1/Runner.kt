@@ -7,6 +7,9 @@ object Runner {
         val decoded = MonakaCodec.decodeEnvelope(bytes)
         if(decoded is DecodeResult.Failure) { println("ERROR:${decoded.code}"); return }
         val model = (decoded as DecodeResult.Success).value
+        if(args.getOrNull(1)=="--version-minor") {
+            println((model as TrackerObservation).version.minor); return
+        }
         if(args.getOrNull(1)=="--self-test") {
             val pose = model as TrackerObservation
             for(x in listOf(Double.NaN,Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY)) {
