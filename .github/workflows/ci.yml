@@ -1,0 +1,29 @@
+name: protocol-contract
+on: [push, pull_request]
+jobs:
+  contract:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: microsoft
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.4'
+      - run: python -m pip install -r tools/test-requirements.txt
+      - run: python tools/check_boundaries.py
+      - run: cmake -S cpp -B build/cpp -DMONAKA_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build/cpp --config Release
+      - run: ctest --test-dir build/cpp -C Release --output-on-failure
+      - run: gradle -p jvm --no-daemon build
+      - run: python tools/test.py
+      - run: python tools/package.py
+      - run: python tools/verify_kit.py
