@@ -57,6 +57,8 @@ function Invoke-RevisionStep {
 
 $BuildDir = Join-Path $RepoRoot ("build/revision-{0}" -f $Mode.ToLowerInvariant())
 $Steps = @(
+    @{ Name='release-tooling'; File='python'; Args=@('scripts/test_release_v2.py') },
+    @{ Name='release-tooling-optimized'; File='python'; Args=@('-O','scripts/test_release_v2.py') },
     @{ Name='boundaries'; File='python'; Args=@('tools/check_boundaries.py') },
     @{ Name='cmake-configure'; File='cmake'; Args=@('-S','cpp','-B',$BuildDir,'-DMONAKA_BUILD_TESTS=ON','-DCMAKE_BUILD_TYPE=Release') },
     @{ Name='cmake-build'; File='cmake'; Args=@('--build',$BuildDir,'--config','Release') },

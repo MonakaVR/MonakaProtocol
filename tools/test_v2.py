@@ -142,6 +142,7 @@ def main():
     jar = R / 'jvm/build/libs/monaka-protocol-jvm-0.1.0.jar'
     report = {
         'status': 'PASS',
+        'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=R, text=True).strip(),
         'cases': len(index),
         'cross_language_directions': directions,
         'hardware': 'NOT RUN',

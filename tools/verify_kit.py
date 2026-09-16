@@ -4,6 +4,9 @@ import hashlib
 import json
 import os
 from pathlib import Path
+
+def require(ok, message):
+    if not ok: raise RuntimeError(message)
 import subprocess
 import tempfile
 import zipfile
@@ -21,8 +24,8 @@ major = a.wire_major
 dist = R / 'dist' if major == 1 else R / 'dist/v2'
 manifest = json.loads((dist / 'handoff-manifest.json').read_text())
 archive = dist / manifest['artifact']
-assert manifest['wire_version'] == {'major': major, 'minor': 0}
-assert sha(archive.read_bytes()) == manifest['sha256']
+require(manifest['wire_version'] == {'major': major, 'minor': 0}, "Validation failed: manifest['wire_version'] == {'major': major, 'minor': 0}")
+require(sha(archive.read_bytes()) == manifest['sha256'], "Validation failed: sha(archive.read_bytes()) == manifest['sha256']")
 
 namespace = f'v{major}'
 fixture_root = 'fixtures/valid' if major == 1 else 'fixtures/v2'
@@ -31,22 +34,22 @@ message_names = ['observation', 'device-state', 'mtp-pose', 'tracker-state']
 with tempfile.TemporaryDirectory(prefix=f'monaka-kit-v{major}-') as directory:
     w = Path(directory)
     kit = w / 'third_party/monaka-protocol'
-    assert w.resolve().parent == Path(tempfile.gettempdir()).resolve()
+    require(w.resolve().parent == Path(tempfile.gettempdir()).resolve(), 'Validation failed: w.resolve().parent == Path(tempfile.gettempdir()).resolve()')
     with zipfile.ZipFile(archive) as z:
-        assert all(not Path(n).is_absolute() and '..' not in Path(n).parts for n in z.namelist())
+        require(all(not Path(n).is_absolute() and '..' not in Path(n).parts for n in z.namelist()), "Validation failed: all(not Path(n).is_absolute() and '..' not in Path(n).parts for n in z.namelist())")
         z.extractall(kit)
 
     lock = json.loads((kit / 'protocol.lock.json').read_text())
-    assert lock['wire_version'] == {'major': major, 'minor': 0}
-    assert sha((kit / 'protocol.lock.json').read_bytes()) == manifest['protocol_lock_sha256']
-    assert lock['source_commit'] == manifest['source_commit'] and lock['schema_commit'] == manifest['schema_commit']
+    require(lock['wire_version'] == {'major': major, 'minor': 0}, "Validation failed: lock['wire_version'] == {'major': major, 'minor': 0}")
+    require(sha((kit / 'protocol.lock.json').read_bytes()) == manifest['protocol_lock_sha256'], "Validation failed: sha((kit / 'protocol.lock.json').read_bytes()) == manifest['protocol_lock_sha256']")
+    require(lock['source_commit'] == manifest['source_commit'] and lock['schema_commit'] == manifest['schema_commit'], "Validation failed: lock['source_commit'] == manifest['source_commit'] and lock['schema_commit'] == manifest['schema_commit']")
     for line in (kit / 'SHA256SUMS').read_text().splitlines():
         h, n = line.split('  ', 1)
-        assert sha((kit / n).read_bytes()) == h, n
+        require(sha((kit / n).read_bytes()) == h, n)
     for n, h in lock['files_sha256'].items():
-        assert sha((kit / n).read_bytes()) == h, n
+        require(sha((kit / n).read_bytes()) == h, n)
     for n, info in lock['toolchain_and_dependencies']['vendored_files'].items():
-        assert sha((kit / n).read_bytes()) == info['sha256'], n
+        require(sha((kit / n).read_bytes()) == info['sha256'], n)
 
     (w / 'CMakeLists.txt').write_text('''cmake_minimum_required(VERSION 3.20)
 project(KitConsumer LANGUAGES CXX)

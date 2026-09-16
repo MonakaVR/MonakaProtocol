@@ -27,6 +27,9 @@ files['jvm/libs/'+jar.name]=jar.read_bytes()
 if major==2:
     report=json.loads((R/'build/test-v2-results.json').read_text())
     require(report['status']=='PASS','v2 validation did not pass')
+    require(report.get('source_commit')==head,'v2 validation belongs to another HEAD')
+    require(report.get('cases',0)>0 and report.get('cross_language_directions',0)>0,'empty v2 validation')
+    require(report.get('source_sha256') and report.get('binary_sha256'),'missing v2 validation hashes')
     for group in ['source_sha256','binary_sha256']:
         for n,h in report[group].items(): require(sha((R/n).read_bytes())==h,'stale v2 validation: '+n)
     files['validation/protocol-v2-results.json']=(R/'build/test-v2-results.json').read_bytes()
