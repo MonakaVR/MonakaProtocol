@@ -1,4 +1,4 @@
-package dev.monaka.protocol.v1
+package dev.monaka.protocol.v2
 
 import com.google.gson.*
 import com.google.gson.stream.JsonReader
@@ -127,7 +127,7 @@ private fun dispatch(v: JsonElement): String {
     val major = ver["major"].asDouble
     need(major.isFinite() && floor(major)==major,ErrorCode.InvalidType,"version.major")
     need(major>=0 && major<=65535,ErrorCode.OutOfRange,"version.major")
-    need(major==1.0,ErrorCode.UnsupportedVersion,"version.major")
+    need(major==2.0,ErrorCode.UnsupportedVersion,"version.major")
     return when(j["protocol"].asString to j["type"].asString) {
         "monaka.observation" to "pose" -> "TrackerObservation"
         "monaka.observation" to "device_state" -> "ObservationDeviceState"
@@ -145,9 +145,15 @@ private fun semantics(j: JsonObject) {
         for((f,c) in listOf("fraction" to "battery_fraction","charging" to "charging"))
             if(!b[f].isJsonNull) need(c in caps,ErrorCode.InconsistentValidity,c)
     }
-    if(j["type"].asString!="pose") return
+    if(j.has("input")) need(j["input"].asJsonObject["source_id"]==j["source_id"],ErrorCode.InconsistentValidity,"input.source_id")
+    if(j["type"].asString!="pose") {
+        if(j["presence"].asString=="absent" || j["tracking_state"].asString !in listOf("tracked","degraded"))
+            need(j["modality"].asString=="none",ErrorCode.InconsistentValidity,"inactive state modality")
+        return
+    }
     val valid = j["validity"].asJsonObject
     val p = valid["position"].asBoolean; val o = valid["orientation"].asBoolean
+    need(when(j["modality"].asString) { "full" -> p&&o; "rotation_only" -> !p&&o; else -> !p&&!o },ErrorCode.InconsistentValidity,"modality")
     for((n,b) in listOf("position" to p,"orientation" to o))
         if(b) need(!j[n].isJsonNull && n in caps,ErrorCode.InconsistentValidity,n)
     for(n in listOf("linear_velocity","angular_velocity","linear_acceleration"))

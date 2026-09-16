@@ -1,11 +1,11 @@
-#include "monaka/protocol/v1/codec.hpp"
+#include "monaka/protocol/v2/codec.hpp"
 #include "nlohmann/json.hpp"
 #include <cmath>
 #include <regex>
 #include <set>
 #include <stdexcept>
 
-namespace monaka::protocol::v1 {
+namespace monaka::protocol::v2 {
 using json = nlohmann::json;
 #include "models_json.inc"
 namespace {
@@ -84,7 +84,7 @@ std::string dispatch(const json& j) {
     const double major=j["version"]["major"].get<double>();
     need(std::isfinite(major) && std::floor(major)==major,ErrorCode::InvalidType,"version.major");
     need(major>=0 && major<=65535,ErrorCode::OutOfRange,"version.major");
-    need(major==1,ErrorCode::UnsupportedVersion,"version.major");
+    need(major==2,ErrorCode::UnsupportedVersion,"version.major");
     const auto p=j["protocol"].get<std::string>(), t=j["type"].get<std::string>();
     if(p=="monaka.observation" && t=="pose") return "TrackerObservation";
     if(p=="monaka.observation" && t=="device_state") return "ObservationDeviceState";
@@ -101,8 +101,15 @@ void semantics(const json& j) {
         for(auto pair:{std::pair{"fraction","battery_fraction"},std::pair{"charging","charging"}})
             if(!j["battery"][pair.first].is_null()) need(has(pair.second),ErrorCode::InconsistentValidity,pair.second);
     }
-    if(j.at("type")!="pose") return;
+    if(j.contains("input")) need(j["input"]["source_id"]==j["source_id"],ErrorCode::InconsistentValidity,"input.source_id");
+    if(j.at("type")!="pose") {
+        if(j["presence"]=="absent" || (j["tracking_state"]!="tracked" && j["tracking_state"]!="degraded"))
+            need(j["modality"]=="none",ErrorCode::InconsistentValidity,"inactive state modality");
+        return;
+    }
     bool p=j["validity"]["position"], o=j["validity"]["orientation"];
+    const auto modality=j.at("modality");
+    need(modality=="full" ? p&&o : modality=="rotation_only" ? !p&&o : !p&&!o,ErrorCode::InconsistentValidity,"modality");
     for(auto pair:{std::pair{"position",p},std::pair{"orientation",o}})
         if(pair.second) need(!j.at(pair.first).is_null() && has(pair.first),ErrorCode::InconsistentValidity,pair.first);
     for(auto name:{"linear_velocity","angular_velocity","linear_acceleration"})

@@ -7,12 +7,21 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CHECK = argparse.ArgumentParser()
 CHECK.add_argument('--check', action='store_true')
-checking = CHECK.parse_args().check
+CHECK.add_argument('--wire-major', type=int, choices=[1, 2], default=1)
+args = CHECK.parse_args()
+checking = args.check
+v2 = args.wire_major == 2
 
 def put(name, content):
+    if v2:
+        content = content.rstrip() + '\n'
+        name = name.replace('/v1/', '/v2/')
+        if name.startswith('schema/'): name = name.replace('schema/', 'schema/v2/', 1)
+        if name.startswith('cpp/src/'): name = name.replace('cpp/src/', 'cpp/src/v2/', 1)
+        content = content.replace('namespace monaka::protocol::v1', 'namespace monaka::protocol::v2').replace('package dev.monaka.protocol.v1', 'package dev.monaka.protocol.v2')
     path = ROOT / name
     if checking:
-        assert path.read_text(encoding='utf-8') == content, f'generated drift: {name}'
+        if path.read_text(encoding='utf-8') != content: raise RuntimeError(f'generated drift: {name}')
     else:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding='utf-8', newline='\n')
@@ -20,7 +29,8 @@ def put(name, content):
 task = (ROOT / 'docs/codex/Task1_MonakaProtocol.md').read_text(encoding='utf-8')
 c1 = task.split('<!-- BEGIN COMMON C1 -->\n')[1].split('<!-- END COMMON C1 -->')[0]
 assert hashlib.sha256(c1.encode()).hexdigest() == '3a76435c8b25b3975028f9a83c4dc3d1e3848806c9608d885f5bba74a1198ed3'
-put('docs/C1.md', c1)
+if not v2: put('docs/C1.md', c1)
+else: c1 = (ROOT / 'docs/C2.md').read_text(encoding='utf-8')
 
 def enum(*values): return {'type': 'string', 'enum': list(values)}
 def ref(name): return {'$ref': '#/$defs/' + name}
@@ -57,12 +67,16 @@ def fields(**items):
 defs['Bool'] = {'type':'boolean'}
 model('Version', fields(major='UInt16',minor='UInt16'))
 defs['Version']['properties']['major'] = {'type':'integer','const':1}
+if v2:
+    defs['Version']['properties']['major']['const'] = 2
+    defs['Modality'] = enum('full', 'rotation_only', 'none')
 model('CoordinateSpace', fields(id='Id',convention='Id',revision='UInt32'))
 model('Battery', fields(fraction='Fraction?',charging='Bool?',timestamp_ns='U63'))
 model('Derivative', fields(value='Vec3',frame='Frame',evidence='DerivativeEvidence'))
 model('Validity', fields(position='Bool',orientation='Bool'))
 model('Confidence', fields(position='Fraction',orientation='Fraction'))
 model('Input', fields(device_id='Id',session_id='Uuid',sequence='U63'))
+if v2: model('Input', fields(source_id='Id',device_id='Id',session_id='Uuid',sequence='U63',orientation_evidence='Evidence'))
 defs['Capabilities'] = {'type':'array','items':ref('Capability'),'uniqueItems':True}
 header = fields(version='Version',source_id='Id',session_id='Uuid',clock_id='Uuid',sequence='U63',timestamp_ns='U63',sent_at_ns='U63',timestamp_kind='TimestampKind')
 pose = fields(position='Vec3?',orientation='QuatXyzw?',validity='Validity')
@@ -78,6 +92,9 @@ for name,(protocol,kind) in messages.items():
         if mtp: f += fields(confidence='Confidence')
     else: f += fields(presence='Presence')
     f += common
+    if v2:
+        f += fields(modality='Modality')
+        if mtp: f += fields(publisher_id='Id')
     if not mtp or kind != 'pose': f += fields(battery='Battery?')
     if mtp: f += fields(mapping_revision='UInt32')
     if mtp and kind == 'pose': f += fields(input='Input')
@@ -89,7 +106,7 @@ for name,(protocol,kind) in messages.items():
         defs[name]['properties']['coordinate_space'] = obj({'id':ref('Id'),'convention':{'type':'string','const':'rh_y_up_neg_z_forward'},'revision':ref('UInt32')})
 
 for file,names in [('tracker-observation',list(messages)[:2]),('monaka-tracking',list(messages)[2:])]:
-    schema = {'$schema':'https://json-schema.org/draft/2020-12/schema', '$id':f'https://monaka.dev/schema/v1/{file}.schema.json',
+    schema = {'$schema':'https://json-schema.org/draft/2020-12/schema', '$id':f'https://monaka.dev/schema/v{args.wire_major}/{file}.schema.json',
               '$comment':'C1 candidate SHA256 ' + hashlib.sha256(c1.encode()).hexdigest(),
               'oneOf':[ref(n) for n in names], '$defs':defs}
     put(f'schema/{file}.schema.json',json.dumps(schema,indent=2,ensure_ascii=False)+'\n')
@@ -153,3 +170,28 @@ put('jvm/src/main/kotlin/dev/monaka/protocol/v1/ModelsJson.kt',ktcon)
 compact=json.dumps({'$defs':defs},separators=(',',':'))
 put('cpp/src/schema.inc', 'static const json schema = json::parse(R"SCHEMA('+compact+')SCHEMA");\n')
 put('jvm/src/main/kotlin/dev/monaka/protocol/v1/Schema.kt','package dev.monaka.protocol.v1\nimport com.google.gson.JsonParser\ninternal val schema = JsonParser.parseString("""'+compact.replace('$',"${'$'}")+'""").asJsonObject\n')
+if v2:
+    # Share the parser implementation; only version dispatch and explicit semantic
+    # policy differ. --check catches drift in the generated v2 codec as well.
+    cpp_codec = (ROOT / 'cpp/src/codec.cpp').read_text(encoding='utf-8').replace('protocol/v1/', 'protocol/v2/').replace('major==1,', 'major==2,')
+    cpp_codec = cpp_codec.replace('bool p=j["validity"]["position"], o=j["validity"]["orientation"];', '''bool p=j["validity"]["position"], o=j["validity"]["orientation"];
+    const auto modality=j.at("modality");
+    need(modality=="full" ? p&&o : modality=="rotation_only" ? !p&&o : !p&&!o,ErrorCode::InconsistentValidity,"modality");''')
+    cpp_codec = cpp_codec.replace('if(j.at("type")!="pose") return;', '''if(j.contains("input")) need(j["input"]["source_id"]==j["source_id"],ErrorCode::InconsistentValidity,"input.source_id");
+    if(j.at("type")!="pose") {
+        if(j["presence"]=="absent" || (j["tracking_state"]!="tracked" && j["tracking_state"]!="degraded"))
+            need(j["modality"]=="none",ErrorCode::InconsistentValidity,"inactive state modality");
+        return;
+    }''')
+    put('cpp/src/codec.cpp', cpp_codec)
+    put('cpp/include/monaka/protocol/v1/codec.hpp', (ROOT / 'cpp/include/monaka/protocol/v1/codec.hpp').read_text().replace('protocol/v1/', 'protocol/v2/'))
+    kt_codec = (ROOT / 'jvm/src/main/kotlin/dev/monaka/protocol/v1/MonakaCodec.kt').read_text(encoding='utf-8').replace('major==1.0,', 'major==2.0,')
+    kt_codec = kt_codec.replace('val p = valid["position"].asBoolean; val o = valid["orientation"].asBoolean', '''val p = valid["position"].asBoolean; val o = valid["orientation"].asBoolean
+    need(when(j["modality"].asString) { "full" -> p&&o; "rotation_only" -> !p&&o; else -> !p&&!o },ErrorCode.InconsistentValidity,"modality")''')
+    kt_codec = kt_codec.replace('if(j["type"].asString!="pose") return', '''if(j.has("input")) need(j["input"].asJsonObject["source_id"]==j["source_id"],ErrorCode.InconsistentValidity,"input.source_id")
+    if(j["type"].asString!="pose") {
+        if(j["presence"].asString=="absent" || j["tracking_state"].asString !in listOf("tracked","degraded"))
+            need(j["modality"].asString=="none",ErrorCode.InconsistentValidity,"inactive state modality")
+        return
+    }''')
+    put('jvm/src/main/kotlin/dev/monaka/protocol/v1/MonakaCodec.kt', kt_codec)
