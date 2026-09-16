@@ -25,8 +25,13 @@ function Invoke-RevisionStep {
     $timer = [System.Diagnostics.Stopwatch]::StartNew()
     $global:LASTEXITCODE = 0
     $exitCode = 0
+    $previousErrorActionPreference = $ErrorActionPreference
     Push-Location $RepoRoot
     try {
+        # Windows PowerShell 5.1 wraps native stderr as NativeCommandError.
+        # Native tools such as CMake may write warnings to stderr while still
+        # returning exit code 0, so judge native steps by LASTEXITCODE instead.
+        $ErrorActionPreference = 'Continue'
         & $FilePath @Arguments *> $logPath
         if ($null -ne $LASTEXITCODE) { $exitCode = [int]$LASTEXITCODE }
     }
@@ -35,6 +40,7 @@ function Invoke-RevisionStep {
         $exitCode = 1
     }
     finally {
+        $ErrorActionPreference = $previousErrorActionPreference
         Pop-Location
         $timer.Stop()
     }
