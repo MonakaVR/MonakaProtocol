@@ -8,10 +8,11 @@ On `refactor/monaka-layer-separation` at and after commit `572e58cfa20b8b4335207
 
 Read repository-local normative material in this order before making implementation changes:
 
-1. `docs/architecture-revision.md` — current Architecture Revision and migration intent.
-2. `docs/C2.md` — current wire 2.0 contract.
-3. `docs/C1.md` — inherited rules only where C2 explicitly says they remain unchanged; otherwise historical wire 1.0 contract.
-4. `docs/codex/Task1_MonakaProtocol.md` — historical Task 1 baseline and v1 evidence, not authority to revert the coordinated v2 revision.
+1. `docs/codex/CURRENT.md` — current Codex entry point, precedence, checkpoint and resume rule.
+2. `docs/architecture-revision.md` — current Architecture Revision and migration intent.
+3. `docs/C2.md` — current wire 2.0 contract.
+4. `docs/C1.md` — inherited rules only where C2 explicitly says they remain unchanged; otherwise historical wire 1.0 contract.
+5. `docs/codex/Task1_MonakaProtocol.md` — historical Task 1 baseline and v1 evidence, not authority to revert the coordinated v2 revision.
 
 Do not remove or rewrite the v1 implementation/artifacts merely because v2 is current. v1 remains historical compatibility/evidence. Conversely, do not revert v2 fields, identity semantics, modality semantics, or validation merely to satisfy an older Task 1 paragraph.
 
@@ -28,5 +29,6 @@ If a future user instruction explicitly replaces this revision, record the new p
 - Run the applicable build and tests before reporting a task complete. Explicitly report anything that could not be verified.
 - Do not claim hardware validation when no hardware validation was performed.
 - A downstream v2 migration may consume only an actually generated, hash-pinned v2 kit from a clean committed source tree. Do not fabricate artifact hashes or treat source files alone as a fixed handoff.
+- Do not treat successful v1 validation or v1 package generation as evidence that the v2 Architecture Revision is validated.
 
 If repository state conflicts with the active Architecture Revision or C2, inspect the difference and report it rather than overwriting or discarding work.
