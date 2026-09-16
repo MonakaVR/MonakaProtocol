@@ -1,0 +1,186 @@
+{
+  "repo": "MonakaProtocol",
+  "commands": [
+    {
+      "name": "release-tool-tests",
+      "command": [
+        "{PYTHON}",
+        "scripts/test_release_v2.py"
+      ]
+    },
+    {
+      "name": "release-tool-tests-optimized",
+      "command": [
+        "{PYTHON}",
+        "-O",
+        "scripts/test_release_v2.py"
+      ]
+    },
+    {
+      "name": "java-version",
+      "command": [
+        "{JAVA}",
+        "-version"
+      ]
+    },
+    {
+      "name": "cmake-version",
+      "command": [
+        "{CMAKE}",
+        "--version"
+      ]
+    },
+    {
+      "name": "boundaries",
+      "command": [
+        "{PYTHON}",
+        "tools/check_boundaries.py"
+      ]
+    },
+    {
+      "name": "cmake-configure",
+      "command": [
+        "{CMAKE}",
+        "-S",
+        "{ROOT}/cpp",
+        "-B",
+        "{BUILD}",
+        "-A",
+        "x64",
+        "-DBUILD_TESTING=ON",
+        "-DMONAKA_BUILD_TESTS=ON",
+        "-DCMAKE_CXX_FLAGS=/EHsc"
+      ]
+    },
+    {
+      "name": "cmake-build",
+      "command": [
+        "{CMAKE}",
+        "--build",
+        "{BUILD}",
+        "--config",
+        "Release"
+      ]
+    },
+    {
+      "name": "ctest",
+      "command": [
+        "{CTEST}",
+        "--test-dir",
+        "{BUILD}",
+        "-C",
+        "Release",
+        "--output-on-failure",
+        "--no-tests=error",
+        "--output-junit",
+        "{WORK}/ctest.xml"
+      ]
+    },
+    {
+      "name": "jvm-build",
+      "command": [
+        "{GRADLE}",
+        "-p",
+        "jvm",
+        "--no-daemon",
+        "build",
+        "--rerun-tasks"
+      ]
+    },
+    {
+      "name": "schema-codec-v2",
+      "command": [
+        "{PYTHON}",
+        "tools/test_v2.py",
+        "--cpp",
+        "{BUILD}/Release/monaka_codec_runner_v2.exe"
+      ]
+    },
+    {
+      "name": "package-kit-v2",
+      "command": [
+        "{PYTHON}",
+        "tools/package.py",
+        "--wire-major",
+        "2"
+      ]
+    },
+    {
+      "name": "isolated-consumer-v2",
+      "command": [
+        "{PYTHON}",
+        "tools/verify_kit.py",
+        "--wire-major",
+        "2",
+        "--cmake",
+        "{CMAKE}"
+      ]
+    },
+    {
+      "name": "v2-interop",
+      "command": [
+        "{PYTHON}",
+        "scripts/release_interop.py",
+        "--kit",
+        "{ROOT}",
+        "--cpp",
+        "{BUILD}/Release/monaka_codec_runner_v2.exe",
+        "--java-home",
+        "{JAVA_HOME}",
+        "--work",
+        "{WORK}/interop",
+        "--jar",
+        "{ROOT}/jvm/build/libs/monaka-protocol-jvm-0.1.0.jar",
+        "--dependencies",
+        "{ROOT}/jvm/libs"
+      ]
+    }
+  ],
+  "required_steps": [
+    "release-tool-tests",
+    "release-tool-tests-optimized",
+    "java-version",
+    "cmake-version",
+    "boundaries",
+    "cmake-configure",
+    "cmake-build",
+    "ctest",
+    "jvm-build",
+    "schema-codec-v2",
+    "package-kit-v2",
+    "isolated-consumer-v2",
+    "v2-interop"
+  ],
+  "test_groups": [
+    {
+      "name": "native",
+      "paths": [
+        "{WORK}/ctest.xml"
+      ],
+      "required": [
+        "model_validation",
+        "model_validation_v2"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "runtime/monaka-protocol-jvm.jar",
+      "path": "{ROOT}/jvm/build/libs/monaka-protocol-jvm-0.1.0.jar"
+    },
+    {
+      "name": "runtime/monaka_codec_runner_v2.exe",
+      "path": "{BUILD}/Release/monaka_codec_runner_v2.exe"
+    }
+  ],
+  "evidence": [
+    {
+      "name": "evidence/schema-codec-v2.json",
+      "path": "{ROOT}/build/test-v2-results.json"
+    },
+    {
+      "name": "evidence/v2-interop.json",
+      "path": "{WORK}/interop/result.json"
+    }
+  ]
+}
