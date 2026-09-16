@@ -25,5 +25,8 @@ jobs:
       - run: ctest --test-dir build/cpp -C Release --output-on-failure
       - run: gradle -p jvm --no-daemon build
       - run: python tools/test.py
-      - run: python tools/package.py
-      - run: python tools/verify_kit.py
+      - run: python tools/test_v2.py
+      - run: python tools/package.py --wire-major 1
+      - run: python tools/verify_kit.py --wire-major 1
+      - run: python tools/package.py --wire-major 2
+      - run: python tools/verify_kit.py --wire-major 2
