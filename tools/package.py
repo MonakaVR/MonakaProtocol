@@ -36,7 +36,7 @@ if major==2:
 hashes={n:sha(b) for n,b in sorted(files.items())}
 lock={
     'schema_commit':schema_commit,'source_commit':head,'source_tree_clean':True,
-    'contract_status':'candidate / master reconciliation pending',
+    'contract_status':'C2 / current coordinated architecture revision' if major==2 else 'candidate / master reconciliation pending',
     'wire_version':{'major':major,'minor':0},'contract_c1_sha256':hashes['docs/C1.md'],
     'contract_revision_sha256':hashes['docs/C2.md'] if major==2 else hashes['docs/C1.md'],
     'toolchain_and_dependencies':json.loads((R/'dependencies.lock.json').read_text()),
@@ -60,7 +60,7 @@ manifest={
     'schema_commit':schema_commit,'contract_c1_sha256':lock['contract_c1_sha256'],
     'wire_version':lock['wire_version'],'contract_revision_sha256':lock['contract_revision_sha256'],
     'protocol_lock_sha256':sha(files['protocol.lock.json']),
-    'status':'candidate / master reconciliation pending',
+    'status':lock['contract_status'],
 }
 (dist/'handoff-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
 (dist/'protocol.lock.json').write_bytes(files['protocol.lock.json'])
