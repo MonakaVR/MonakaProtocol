@@ -40,6 +40,7 @@ if major==2:
         require(report.get('old_decoder_new_rejections')==[10,10] and report.get('new_decoder_old_passes')==[4,4], 'missing old/new compatibility gate')
         require(report.get('ordered_scenarios',0)>=10, 'missing ordered-stream gate')
         require(max(report['max_fields_encoded_bytes'])<4096, 'authority envelope size gate')
+        require(len(report.get('max_escaped_fields_encoded_bytes',[]))==2 and max(report['max_escaped_fields_encoded_bytes'])<4096, 'escaped authority envelope size gate')
 hashes={n:sha(b) for n,b in sorted(files.items())}
 lock={
     'schema_commit':schema_commit,'source_commit':head,'source_tree_clean':True,

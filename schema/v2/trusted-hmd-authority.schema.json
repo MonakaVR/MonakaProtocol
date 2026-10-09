@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://monaka.dev/schema/v2.1/trusted-hmd-authority.schema.json",
-  "$comment": "C2.1 SHA256 c9980ea50550062c1db51a890e5f8ca91aacaf18aa9d0670b34ce4faada51fa7",
+  "$comment": "C2.1 SHA256 be42d149b939c49ebde4be6ed7f0307bbfbaebcc2ae823ac7680a7cbc18522cc",
   "oneOf": [
     {
       "$ref": "#/$defs/TrustedHmdSourceAuthority"

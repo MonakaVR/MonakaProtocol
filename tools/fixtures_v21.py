@@ -118,6 +118,16 @@ def streams():
     events=[w,m]+[event('common-hmd-pose',i,**{'source.observation_id':str(9007199254740993+i)}) for i in range(2,100)]
     events += [event('world-mapping',100,**{'mapping.mapping_revision':8}),event('common-hmd-pose',101,**{'mapping.mapping_revision':8,'source.observation_id':'9007199254741094'}),event('world-revocation',102)]
     scenarios['common-seq102-revoke-no-pose']=(events,['world','mapping']+['pose']*98+['mapping','pose','revoked'])
+    mapping8=event('world-mapping',3,**{'mapping.mapping_revision':8})
+    freshworld=event('world-authority',0,session_id=SECOND)
+    freshmapping=event('world-mapping',1,session_id=SECOND,**{'mapping.mapping_revision':8})
+    freshpose=event('common-hmd-pose',2,session_id=SECOND,**{'mapping.mapping_revision':8})
+    scenarios['mapping-high-water-reconnect'] = ([w,m,c,mapping8,freshworld,event('world-mapping',1,session_id=SECOND),freshpose],['world','mapping','pose','mapping','world','untrusted','untrusted'])
+    scenarios['mapping-conflict-reconnect'] = ([w,m,c,mapping8,freshworld,event('world-mapping',1,session_id=SECOND,**{'mapping.mapping_revision':8,'transform.translation_xyz':[1.0,0.0,0.0]}),freshpose],['world','mapping','pose','mapping','world','untrusted','untrusted'])
+    scenarios['mapping-snapshot-reconnect'] = ([w,m,c,mapping8,freshworld,freshmapping,freshpose],['world','mapping','pose','mapping','world','mapping','pose'])
+    scenarios['mapping-high-water-republication'] = ([w,m,c,mapping8,event('world-authority',4),event('world-mapping',5),event('common-hmd-pose',6)],['world','mapping','pose','mapping','world','untrusted','untrusted'])
+    scenarios['source-ambiguous-revoke-generation'] = ([a,p,event('source-revocation',2,reason='source_space_ambiguous'),event('source-authority',3,**{'source_space.source_space_generation':'1'}),event('source-pose',4,**{'source.source_space.source_space_generation':'1','source.observation_id':'9007199254740994'})],['authority','pose','revoked','authority','pose'])
+    scenarios['source-lost-token-new-generation'] = ([a,p,r,event('source-authority',3,**{'source_space.source_space_generation':'1'}),event('source-pose',4,**{'source.source_space.source_space_generation':'1'})],['authority','pose','revoked','untrusted','untrusted'])
     return scenarios
 
 def generate():

@@ -303,5 +303,73 @@
       "pose",
       "revoked"
     ]
+  },
+  {
+    "file": "ordered-streams/mapping-high-water-reconnect.jsonl",
+    "outcomes": [
+      "world",
+      "mapping",
+      "pose",
+      "mapping",
+      "world",
+      "untrusted",
+      "untrusted"
+    ]
+  },
+  {
+    "file": "ordered-streams/mapping-conflict-reconnect.jsonl",
+    "outcomes": [
+      "world",
+      "mapping",
+      "pose",
+      "mapping",
+      "world",
+      "untrusted",
+      "untrusted"
+    ]
+  },
+  {
+    "file": "ordered-streams/mapping-snapshot-reconnect.jsonl",
+    "outcomes": [
+      "world",
+      "mapping",
+      "pose",
+      "mapping",
+      "world",
+      "mapping",
+      "pose"
+    ]
+  },
+  {
+    "file": "ordered-streams/mapping-high-water-republication.jsonl",
+    "outcomes": [
+      "world",
+      "mapping",
+      "pose",
+      "mapping",
+      "world",
+      "untrusted",
+      "untrusted"
+    ]
+  },
+  {
+    "file": "ordered-streams/source-ambiguous-revoke-generation.jsonl",
+    "outcomes": [
+      "authority",
+      "pose",
+      "revoked",
+      "authority",
+      "pose"
+    ]
+  },
+  {
+    "file": "ordered-streams/source-lost-token-new-generation.jsonl",
+    "outcomes": [
+      "authority",
+      "pose",
+      "revoked",
+      "untrusted",
+      "untrusted"
+    ]
   }
 ]

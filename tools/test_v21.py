@@ -90,10 +90,34 @@ def main():
     largest=maximize(largest)
     for k in ['source_position','common_position']: largest[k]=[1.7976931348623157e308,-1.7976931348623157e308,1.7976931348623157e308]
     path=scratch/'max-fields.json'; path.write_text(json.dumps(largest,separators=(',',':')))
-    max_sizes=[len(run(c,path).encode()) for c in commands]
+    max_sizes=[]
+    for c in commands:
+        out=run(c,path)
+        require(not out.startswith('ERROR:'),'maximum authority envelope failed: '+out)
+        require(json.loads(out)==largest,'maximum authority envelope semantics')
+        max_sizes.append(len(out.encode()))
     require(max(max_sizes)<4096,'complete common envelope exceeds limit')
+    # Quotes/backslashes expand in JSON while still satisfying the 96-byte Id
+    # bound. Combine escaped IDs with long binary64 unit-quaternion components.
+    escaped=copy.deepcopy(largest)
+    def escape_ids(x):
+        if isinstance(x,dict): return {k:escape_ids(v) for k,v in x.items()}
+        if isinstance(x,list): return x
+        return '\\'*96 if x=='x'*96 else x
+    escaped=escape_ids(escaped)
+    for k in ['source_orientation','common_orientation']:
+        escaped[k]=[0.5773502691896257,0.5773502691896257,0.5773502691896257,2.2250738585072014e-308]
+    path=scratch/'max-escaped-fields.json'; path.write_text(json.dumps(escaped,separators=(',',':')))
+    escaped_sizes=[]
+    for c in commands:
+        out=run(c,path)
+        require(not out.startswith('ERROR:'),'maximum escaped authority envelope failed: '+out)
+        require(json.loads(out)==escaped,'maximum escaped authority envelope semantics')
+        escaped_sizes.append(len(out.encode()))
+    require(max(escaped_sizes)<4096,'escaped common envelope exceeds limit')
     files=[p for f in ['cpp/include','cpp/src','cpp/tests','jvm/src','schema','fixtures','docs','tools'] for p in (R/f).rglob('*') if p.is_file() and '__pycache__' not in p.parts]
     report=dict(status='PASS',source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=R,text=True).strip(),cases=len(index),valid_cases=sum(x['error'] is None for x in index),invalid_cases=sum(x['error'] is not None for x in index),cross_language_directions=directions,ordered_scenarios=scenario_count,ordered_events=event_count,streams=stream_evidence,old_decoder_source=PIN,old_decoder_new_rejections=reject_counts,new_decoder_old_passes=old_counts,canonical_v20_sha256=canonical_hashes,frozen_v20_sha256=preserved,encoded_sizes=sizes,max_fields_encoded_bytes=max_sizes,hardware='NOT RUN',source_sha256={p.relative_to(R).as_posix():sha(p.read_bytes()) for p in files},binary_sha256={cpp.relative_to(R).as_posix():sha(cpp.read_bytes()),'jvm/build/libs/monaka-protocol-jvm-0.1.0.jar':sha((R/'jvm/build/libs/monaka-protocol-jvm-0.1.0.jar').read_bytes())})
+    report['max_escaped_fields_encoded_bytes']=escaped_sizes
     (R/'build/test-v21-results.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({k:v for k,v in report.items() if k in ['status','cases','valid_cases','invalid_cases','cross_language_directions','ordered_scenarios','ordered_events','max_fields_encoded_bytes','old_decoder_new_rejections','new_decoder_old_passes']}))
 
