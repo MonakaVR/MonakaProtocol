@@ -20,6 +20,9 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 WIRE = {"major": 2, "minor": 0}
+CONTRACT = 'docs/C2.md'
+KIT_PROFILE = 'v2'
+RELEASE_PROFILE = 'release-v2'
 
 
 def require(ok, message):
@@ -105,7 +108,13 @@ def check_kit_bytes(archive_bytes, raw, expected=None):
         lock = json.loads(lock_bytes)
         require(lock["source_commit"] == metadata["source_commit"] and lock["source_tree_clean"] is True, "Kit source mismatch")
         require(lock["wire_version"] == WIRE, "Kit lock version mismatch")
-        require(sha(z.read("docs/C2.md")) == metadata["contract_revision_sha256"] == lock["contract_revision_sha256"], "C2 mismatch")
+        require(sha(z.read(CONTRACT)) == metadata["contract_revision_sha256"] == lock["contract_revision_sha256"], "Contract mismatch")
+        if WIRE['minor'] == 1:
+            require(sha(z.read('docs/C2.md')) == metadata['contract_c2_sha256'] == lock['contract_c2_sha256'], 'Frozen C2 mismatch')
+            require(sha(z.read('docs/C2.1.md')) == metadata['contract_c21_sha256'] == lock['contract_c21_sha256'], 'C2.1 mismatch')
+            evidence = json.loads(z.read('validation/protocol-v21-results.json'))
+            require(evidence['status']=='PASS' and evidence['source_commit']==metadata['source_commit'], 'Stale 2.1 validation')
+            require(evidence['old_decoder_new_rejections']==[10,10] and evidence['new_decoder_old_passes']==[4,4], 'Missing 2.1 compatibility evidence')
         sums = {}
         for line in z.read("SHA256SUMS").decode().splitlines():
             digest, name = line.split("  ", 1)
@@ -217,9 +226,9 @@ def run(policy):
         return
     require(os.name == "nt", "F10 release profile is Windows x64; other platforms are NOT RUN")
     token = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
-    work = ROOT / "build/release-v2" / token
+    work = ROOT / 'build' / RELEASE_PROFILE / token
     work.mkdir(parents=True)
-    latest = ROOT / "dist/release-v2/latest.json"
+    latest = ROOT / 'dist' / RELEASE_PROFILE / 'latest.json'
     status = {"result": "RUNNING", "run": token, "hardware_validation": "NOT RUN", "steamvr_interactive": "NOT RUN"}
     save(latest, status)
     try:
@@ -264,7 +273,7 @@ def run(policy):
             for i, path in enumerate(paths):
                 entries[f"evidence/tests/{group['name']}/{i}-{path.name}"] = path.read_bytes()
         if policy["repo"] == "MonakaProtocol":
-            metadata_path = ROOT / "dist/v2/handoff-manifest.json"
+            metadata_path = ROOT / 'dist' / KIT_PROFILE / 'handoff-manifest.json'
             metadata = json.loads(metadata_path.read_bytes())
             archive = metadata_path.parent / metadata["artifact"]
             kit = check_kit(archive, metadata_path)
@@ -298,9 +307,9 @@ def run(policy):
                   "files_sha256": {n: sha(b) for n, b in entries.items()}}
         check_receipt(report, source, policy["required_steps"], [t["required"] for t in policy["test_groups"]])
         entries["evidence/release.json"] = encoded(report)
-        directory = ROOT / "dist/release-v2" / source["commit"] / token
+        directory = ROOT / 'dist' / RELEASE_PROFILE / source["commit"] / token
         directory.mkdir(parents=True)
-        path = directory / (policy["repo"] + "-software-v2.zip")
+        path = directory / (policy["repo"] + '-software-' + KIT_PROFILE + '.zip')
         external = write_archive(path, entries, source["commit"])
         save(directory / "handoff.json", external)
         save(directory / "release.json", report)

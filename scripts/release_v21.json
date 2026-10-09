@@ -1,0 +1,271 @@
+{
+  "repo": "MonakaProtocol",
+  "commands": [
+    {
+      "name": "release-tool-tests",
+      "command": [
+        "{PYTHON}",
+        "scripts/test_release_v2.py"
+      ]
+    },
+    {
+      "name": "release-tool-tests-optimized",
+      "command": [
+        "{PYTHON}",
+        "-O",
+        "scripts/test_release_v2.py"
+      ]
+    },
+    {
+      "name": "release-v21-tool-tests",
+      "command": [
+        "{PYTHON}",
+        "scripts/test_release_v21.py"
+      ]
+    },
+    {
+      "name": "release-v21-tool-tests-optimized",
+      "command": [
+        "{PYTHON}",
+        "-O",
+        "scripts/test_release_v21.py"
+      ]
+    },
+    {
+      "name": "java-version",
+      "command": [
+        "{JAVA}",
+        "-version"
+      ]
+    },
+    {
+      "name": "cmake-version",
+      "command": [
+        "{CMAKE}",
+        "--version"
+      ]
+    },
+    {
+      "name": "generator-v20",
+      "command": [
+        "{PYTHON}",
+        "tools/generate.py",
+        "--wire-major",
+        "2",
+        "--wire-minor",
+        "0",
+        "--check"
+      ]
+    },
+    {
+      "name": "generator-v21",
+      "command": [
+        "{PYTHON}",
+        "tools/generate.py",
+        "--wire-major",
+        "2",
+        "--wire-minor",
+        "1",
+        "--check"
+      ]
+    },
+    {
+      "name": "boundaries",
+      "command": [
+        "{PYTHON}",
+        "tools/check_boundaries.py"
+      ]
+    },
+    {
+      "name": "cmake-configure",
+      "command": [
+        "{CMAKE}",
+        "-S",
+        "{ROOT}/cpp",
+        "-B",
+        "{BUILD}",
+        "-A",
+        "x64",
+        "-DBUILD_TESTING=ON",
+        "-DMONAKA_BUILD_TESTS=ON",
+        "-DCMAKE_CXX_FLAGS=/EHsc"
+      ]
+    },
+    {
+      "name": "cmake-build",
+      "command": [
+        "{CMAKE}",
+        "--build",
+        "{BUILD}",
+        "--config",
+        "Release"
+      ]
+    },
+    {
+      "name": "ctest",
+      "command": [
+        "{CTEST}",
+        "--test-dir",
+        "{BUILD}",
+        "-C",
+        "Release",
+        "--output-on-failure",
+        "--no-tests=error",
+        "--output-junit",
+        "{WORK}/ctest.xml"
+      ]
+    },
+    {
+      "name": "jvm-build",
+      "command": [
+        "{GRADLE}",
+        "-p",
+        "jvm",
+        "--no-daemon",
+        "build",
+        "--rerun-tasks"
+      ]
+    },
+    {
+      "name": "jvm-authority-models",
+      "command": [
+        "{JAVA}",
+        "-cp",
+        "{ROOT}/jvm/build/classes/kotlin/test;{ROOT}/jvm/build/libs/monaka-protocol-jvm-0.1.0.jar;{ROOT}/jvm/libs/gson-2.11.0.jar;{ROOT}/jvm/libs/kotlin-stdlib-2.3.10.jar",
+        "dev.monaka.protocol.v2.AuthorityModelTests",
+        "{ROOT}/fixtures/v2.1/valid/common-hmd-pose.json"
+      ]
+    },
+    {
+      "name": "schema-codec-v2",
+      "command": [
+        "{PYTHON}",
+        "tools/test_v2.py",
+        "--cpp",
+        "{BUILD}/Release/monaka_codec_runner_v2.exe"
+      ]
+    },
+    {
+      "name": "old-decoder-build",
+      "command": [
+        "{PYTHON}",
+        "tools/prepare_old_v20.py",
+        "--cmake",
+        "{CMAKE}",
+        "--gradle",
+        "{GRADLE}"
+      ]
+    },
+    {
+      "name": "schema-codec-v21",
+      "command": [
+        "{PYTHON}",
+        "tools/test_v21.py",
+        "--cpp",
+        "{BUILD}/Release/monaka_codec_runner_v2.exe"
+      ]
+    },
+    {
+      "name": "package-kit-v21",
+      "command": [
+        "{PYTHON}",
+        "tools/package.py",
+        "--wire-major",
+        "2",
+        "--wire-minor",
+        "1"
+      ]
+    },
+    {
+      "name": "isolated-consumer-v21",
+      "command": [
+        "{PYTHON}",
+        "tools/verify_kit.py",
+        "--wire-major",
+        "2",
+        "--cmake",
+        "{CMAKE}",
+        "--wire-minor",
+        "1"
+      ]
+    },
+    {
+      "name": "v2-interop",
+      "command": [
+        "{PYTHON}",
+        "scripts/release_interop.py",
+        "--kit",
+        "{ROOT}",
+        "--cpp",
+        "{BUILD}/Release/monaka_codec_runner_v2.exe",
+        "--java-home",
+        "{JAVA_HOME}",
+        "--work",
+        "{WORK}/interop",
+        "--jar",
+        "{ROOT}/jvm/build/libs/monaka-protocol-jvm-0.1.0.jar",
+        "--dependencies",
+        "{ROOT}/jvm/libs"
+      ]
+    }
+  ],
+  "required_steps": [
+    "release-tool-tests",
+    "release-tool-tests-optimized",
+    "release-v21-tool-tests",
+    "release-v21-tool-tests-optimized",
+    "java-version",
+    "cmake-version",
+    "generator-v20",
+    "generator-v21",
+    "boundaries",
+    "cmake-configure",
+    "cmake-build",
+    "ctest",
+    "jvm-build",
+    "jvm-authority-models",
+    "schema-codec-v2",
+    "old-decoder-build",
+    "schema-codec-v21",
+    "package-kit-v21",
+    "isolated-consumer-v21",
+    "v2-interop"
+  ],
+  "test_groups": [
+    {
+      "name": "native",
+      "paths": [
+        "{WORK}/ctest.xml"
+      ],
+      "required": [
+        "model_validation",
+        "model_validation_v2",
+        "authority_model_validation"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "runtime/monaka-protocol-jvm.jar",
+      "path": "{ROOT}/jvm/build/libs/monaka-protocol-jvm-0.1.0.jar"
+    },
+    {
+      "name": "runtime/monaka_codec_runner_v2.exe",
+      "path": "{BUILD}/Release/monaka_codec_runner_v2.exe"
+    }
+  ],
+  "evidence": [
+    {
+      "name": "evidence/schema-codec-v2.json",
+      "path": "{ROOT}/build/test-v2-results.json"
+    },
+    {
+      "name": "evidence/v2-interop.json",
+      "path": "{WORK}/interop/result.json"
+    },
+    {
+      "name": "evidence/schema-codec-v21.json",
+      "path": "{ROOT}/build/test-v21-results.json"
+    }
+  ]
+}

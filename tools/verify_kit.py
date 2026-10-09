@@ -15,21 +15,28 @@ R = Path(__file__).resolve().parents[1]
 p = argparse.ArgumentParser()
 p.add_argument('--cmake', default='cmake')
 p.add_argument('--wire-major', type=int, choices=[1, 2], default=1)
+p.add_argument('--wire-minor', type=int, choices=[0, 1], default=0)
 a = p.parse_args()
 
 def sha(b):
     return hashlib.sha256(b).hexdigest()
 
 major = a.wire_major
-dist = R / 'dist' if major == 1 else R / 'dist/v2'
+minor = a.wire_minor
+require(not minor or major==2, 'minor 1 requires major 2')
+dist = R / 'dist' if major == 1 else R / ('dist/v2.1' if minor else 'dist/v2')
 manifest = json.loads((dist / 'handoff-manifest.json').read_text())
 archive = dist / manifest['artifact']
-require(manifest['wire_version'] == {'major': major, 'minor': 0}, "Validation failed: manifest['wire_version'] == {'major': major, 'minor': 0}")
+require(manifest['wire_version'] == {'major': major, 'minor': minor}, 'manifest version mismatch')
 require(sha(archive.read_bytes()) == manifest['sha256'], "Validation failed: sha(archive.read_bytes()) == manifest['sha256']")
 
 namespace = f'v{major}'
 fixture_root = 'fixtures/valid' if major == 1 else 'fixtures/v2'
 message_names = ['observation', 'device-state', 'mtp-pose', 'tracker-state']
+message_paths=[f'{fixture_root}/{name}.json' for name in message_names]
+if minor:
+    from fixtures_v21 import valid
+    message_paths += [f'fixtures/v2.1/valid/{n}.json' for n in valid()]
 
 with tempfile.TemporaryDirectory(prefix=f'monaka-kit-v{major}-') as directory:
     w = Path(directory)
@@ -40,7 +47,7 @@ with tempfile.TemporaryDirectory(prefix=f'monaka-kit-v{major}-') as directory:
         z.extractall(kit)
 
     lock = json.loads((kit / 'protocol.lock.json').read_text())
-    require(lock['wire_version'] == {'major': major, 'minor': 0}, "Validation failed: lock['wire_version'] == {'major': major, 'minor': 0}")
+    require(lock['wire_version'] == {'major': major, 'minor': minor}, 'lock version mismatch')
     require(sha((kit / 'protocol.lock.json').read_bytes()) == manifest['protocol_lock_sha256'], "Validation failed: sha((kit / 'protocol.lock.json').read_bytes()) == manifest['protocol_lock_sha256']")
     require(lock['source_commit'] == manifest['source_commit'] and lock['schema_commit'] == manifest['schema_commit'], "Validation failed: lock['source_commit'] == manifest['source_commit'] and lock['schema_commit'] == manifest['schema_commit']")
     for line in (kit / 'SHA256SUMS').read_text().splitlines():
@@ -77,8 +84,8 @@ int main(int argc,char** argv) {{
     run([a.cmake, '-S', '.', '-B', 'build', '-DCMAKE_BUILD_TYPE=Release'])
     run([a.cmake, '--build', 'build', '--config', 'Release'])
     binary = w / ('build/Release/consumer.exe' if os.name == 'nt' else 'build/consumer')
-    for name in message_names:
-        run([binary, kit / f'{fixture_root}/{name}.json'])
+    for name in message_paths:
+        run([binary, kit / name])
 
     (w / 'Consumer.java').write_text(f'''import dev.monaka.protocol.{namespace}.*;
 import java.nio.file.*;
@@ -92,15 +99,15 @@ public class Consumer {{
 ''')
     cp = str(kit / 'jvm/libs/*')
     run(['javac', '--release', '17', '-cp', cp, 'Consumer.java'])
-    for name in message_names:
-        run(['java', '-cp', '.' + os.pathsep + cp, 'Consumer', kit / f'{fixture_root}/{name}.json'])
+    for name in message_paths:
+        run(['java', '-cp', '.' + os.pathsep + cp, 'Consumer', kit / name])
 
-print(f'PASS v{major} external ZIP hash, internal file/lock/dependency hashes and isolated C++/JVM consumers (4 messages each)')
-(R / f'build/kit-verification-v{major}.json').write_text(json.dumps({
+print(f'PASS v{major}.{minor} external ZIP hash, internal file/lock/dependency hashes and isolated C++/JVM consumers ({len(message_paths)} messages each)')
+(R / f'build/kit-verification-v{major}{"1" if minor else ""}.json').write_text(json.dumps({
     'status': 'PASS',
-    'wire_version': {'major': major, 'minor': 0},
+    'wire_version': {'major': major, 'minor': minor},
     'sha256': manifest['sha256'],
     'source_commit': manifest['source_commit'],
-    'cpp_messages': 4,
-    'jvm_messages': 4,
+    'cpp_messages': len(message_paths),
+    'jvm_messages': len(message_paths),
 }, indent=2) + '\n')

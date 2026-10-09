@@ -73,3 +73,18 @@ A consumer must use one fixed major contract explicitly. v1 and v2 reject the ot
 CMake consumers link `MonakaProtocol::Codec`. C++ includes the matching `monaka/protocol/vN/codec.hpp`; JVM consumers use the matching `dev.monaka.protocol.vN` package.
 
 The protocol library owns models/codecs/validation only. Consumers own sockets, session/sequence caches, freshness policy, device access, mapping/calibration, body assignment, fallback, and runtime lifecycle according to the Architecture Revision.
+# Wire 2.1 trusted HMD authority superset
+
+See [C2.1](docs/C2.1.md) and [5Z projection audit](docs/authority-consumer-projection.md).
+Existing observation/MTP messages remain wire 2.0. The ten authority/control/pose
+messages use separate namespaces and canonical minor 1. Codec decode proves valid
+wire only; no runtime transport or production trusted ingress is enabled.
+
+Generate/check with `python tools/generate.py --wire-major 2 --wire-minor 1 --check`
+(minor 0 also checks the unchanged v2.0 definitions in the superset library).
+After C++/JVM builds, run `tools/prepare_old_v20.py`, `tools/test_v2.py` and
+`tools/test_v21.py`. Package and isolated verification require explicit
+`--wire-major 2 --wire-minor 1`; output is `dist/v2.1/monaka-protocol-kit-v2.1.zip`.
+Windows clean-source release: `python scripts/release_v21.py --cmake PATH
+--gradle PATH --java-home JDK17`; recheck with `--verify RELEASE_DIRECTORY`.
+The historical v2.0 release profile keeps its strict minor 0 identity.
