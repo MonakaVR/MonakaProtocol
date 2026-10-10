@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CHECK = argparse.ArgumentParser()
 CHECK.add_argument('--check', action='store_true')
 CHECK.add_argument('--wire-major', type=int, choices=[1, 2], default=1)
-CHECK.add_argument('--wire-minor', type=int, choices=[0, 1], default=0)
+CHECK.add_argument('--wire-minor', type=int, choices=[0, 1, 2], default=0)
 args = CHECK.parse_args()
 checking = args.check
 v2 = args.wire_major == 2
@@ -116,6 +116,8 @@ for file,names in [('tracker-observation',list(messages)[:2]),('monaka-tracking'
 if v2:
     import authority_definition as authority
     authority.define(defs, model, fields, ref, enum, messages, put, ROOT)
+    import publisher_identity_definition as identity
+    identity.define(defs, models, put, ROOT)
 
 cpp_types = {'Id':'std::string','Uuid':'std::string','U63':'std::int64_t','I64':'std::int64_t','UInt32':'std::uint32_t','UInt16':'std::uint16_t','Fraction':'double','Bool':'bool','Vec3':'Vec3','QuatXyzw':'QuatXyzw','Capabilities':'std::vector<std::string>'}
 kt_types = {'Id':'String','Uuid':'String','U63':'Long','I64':'Long','UInt32':'Long','UInt16':'Int','Fraction':'Double','Bool':'Boolean','Vec3':'List<Double>','QuatXyzw':'List<Double>','Capabilities':'List<String>'}
@@ -138,6 +140,10 @@ for name,ff in models.items():
     ktcon += f'internal fun {name}.toJson(): JsonObject = JsonObject().also {{ j ->\n'
     for n,t,null,opt in ff:
         expr = f'std::to_string(v.{n})' if t in ('U63','I64') else f'v.{n}'
+        if n == 'source_publisher_id':
+            conversions += '    if(v.source_publisher_id) j["source_publisher_id"]=*v.source_publisher_id;\n'
+            ktcon += '    if(source_publisher_id != null) j.addProperty("source_publisher_id", source_publisher_id)\n'
+            continue
         if null:
             expr = f'std::to_string(*v.{n})' if t in ('U63','I64') else f'*v.{n}'
             conversions += f'    if(v.{n}) j["{n}"]={expr}; else j["{n}"]=nullptr;\n'
@@ -150,6 +156,9 @@ for name,ff in models.items():
         p,k=messages[name]
         conversions+=f'    j["protocol"]="{p}"; j["type"]="{k}";\n'
         ktcon+=f'    j.addProperty("protocol", "{p}"); j.addProperty("type", "{k}")\n'
+        if v2 and name in identity.COMMON:
+            conversions += '    if(v.source_publisher_id) j["protocol"]="monaka.common_world_identity";\n'
+            ktcon += '    if(source_publisher_id != null) j.addProperty("protocol", "monaka.common_world_identity")\n'
     conversions += '}\n'
     ktcon += '}\n'
     conversions += f'void from_json(const json& j, {name}& v) {{\n'
@@ -157,6 +166,10 @@ for name,ff in models.items():
     for n,t,null,opt in ff:
         ct=cpp_types.get(t,t)
         expr=f'std::stoll(j.at("{n}").get<std::string>())' if t in ('U63','I64') else f'j.at("{n}").get<{ct}>()'
+        if n == 'source_publisher_id':
+            conversions += '    if(j.at("protocol")=="monaka.common_world_identity") v.source_publisher_id=j.at("source_publisher_id").get<std::string>(); else v.source_publisher_id.reset();\n'
+            ktcon += '    source_publisher_id = if(j["protocol"].asString=="monaka.common_world_identity") j["source_publisher_id"].asString else null,\n'
+            continue
         if null: conversions += f'    if(j.contains("{n}") && !j.at("{n}").is_null()) v.{n}={expr}; else v.{n}.reset();\n'
         else: conversions += f'    v.{n}={expr};\n'
         x=f'j.get("{n}")'
@@ -169,6 +182,9 @@ for name,ff in models.items():
     conversions+='}\n'
     ktcon+=')\n'
 cpp += 'using Envelope = std::variant<' + ','.join(messages) + '>;\n}\n'
+if v2:
+    cpp += 'namespace monaka::protocol::v2 { inline constexpr Version PublisherIdentityWireVersion{2,2}; inline constexpr const char* PublisherIdentityProtocol = "monaka.common_world_identity"; }\n'
+    kt += 'object PublisherIdentityWire { const val MAJOR = 2; const val MINOR = 2; const val PROTOCOL = "monaka.common_world_identity" }\n'
 put('cpp/include/monaka/protocol/v1/models.hpp',cpp)
 put('cpp/src/models_json.inc',conversions)
 put('jvm/src/main/kotlin/dev/monaka/protocol/v1/Models.kt',kt)
@@ -190,6 +206,7 @@ if v2:
         return;
     }''')
     cpp_codec = authority.cpp_codec(cpp_codec)
+    cpp_codec = identity.cpp_codec(cpp_codec)
     put('cpp/src/codec.cpp', cpp_codec)
     put('cpp/include/monaka/protocol/v1/codec.hpp', (ROOT / 'cpp/include/monaka/protocol/v1/codec.hpp').read_text().replace('protocol/v1/', 'protocol/v2/'))
     kt_codec = (ROOT / 'jvm/src/main/kotlin/dev/monaka/protocol/v1/MonakaCodec.kt').read_text(encoding='utf-8').replace('major==1.0,', 'major==2.0,')
@@ -202,4 +219,5 @@ if v2:
         return
     }''')
     kt_codec = authority.kt_codec(kt_codec)
+    kt_codec = identity.kt_codec(kt_codec)
     put('jvm/src/main/kotlin/dev/monaka/protocol/v1/MonakaCodec.kt', kt_codec)

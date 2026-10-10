@@ -447,7 +447,9 @@ void to_json(json& j, const CommonWorldAuthorityPublication& v) { j=json::object
     j["timestamp_kind"]=v.timestamp_kind;
     j["world"]=v.world;
     j["anchor_source"]=v.anchor_source;
+    if(v.source_publisher_id) j["source_publisher_id"]=*v.source_publisher_id;
     j["protocol"]="monaka.common_world"; j["type"]="world_authority";
+    if(v.source_publisher_id) j["protocol"]="monaka.common_world_identity";
 }
 void from_json(const json& j, CommonWorldAuthorityPublication& v) {
     v.version=j.at("version").get<Version>();
@@ -460,6 +462,7 @@ void from_json(const json& j, CommonWorldAuthorityPublication& v) {
     v.timestamp_kind=j.at("timestamp_kind").get<std::string>();
     v.world=j.at("world").get<CommonWorldReference>();
     v.anchor_source=j.at("anchor_source").get<SourceSpaceAuthority>();
+    if(j.at("protocol")=="monaka.common_world_identity") v.source_publisher_id=j.at("source_publisher_id").get<std::string>(); else v.source_publisher_id.reset();
 }
 void to_json(json& j, const CommonWorldMappingPublication& v) { j=json::object();
     j["version"]=v.version;
@@ -472,7 +475,9 @@ void to_json(json& j, const CommonWorldMappingPublication& v) { j=json::object()
     j["timestamp_kind"]=v.timestamp_kind;
     j["mapping"]=v.mapping;
     j["transform"]=v.transform;
+    if(v.source_publisher_id) j["source_publisher_id"]=*v.source_publisher_id;
     j["protocol"]="monaka.common_world"; j["type"]="mapping_publication";
+    if(v.source_publisher_id) j["protocol"]="monaka.common_world_identity";
 }
 void from_json(const json& j, CommonWorldMappingPublication& v) {
     v.version=j.at("version").get<Version>();
@@ -485,6 +490,7 @@ void from_json(const json& j, CommonWorldMappingPublication& v) {
     v.timestamp_kind=j.at("timestamp_kind").get<std::string>();
     v.mapping=j.at("mapping").get<CommonMappingReference>();
     v.transform=j.at("transform").get<RigidTransform>();
+    if(j.at("protocol")=="monaka.common_world_identity") v.source_publisher_id=j.at("source_publisher_id").get<std::string>(); else v.source_publisher_id.reset();
 }
 void to_json(json& j, const TrustedHmdCommonPose& v) { j=json::object();
     j["version"]=v.version;
@@ -502,7 +508,9 @@ void to_json(json& j, const TrustedHmdCommonPose& v) { j=json::object();
     j["validity"]=v.validity;
     j["common_position"]=v.common_position;
     j["common_orientation"]=v.common_orientation;
+    if(v.source_publisher_id) j["source_publisher_id"]=*v.source_publisher_id;
     j["protocol"]="monaka.common_world"; j["type"]="common_pose";
+    if(v.source_publisher_id) j["protocol"]="monaka.common_world_identity";
 }
 void from_json(const json& j, TrustedHmdCommonPose& v) {
     v.version=j.at("version").get<Version>();
@@ -520,6 +528,7 @@ void from_json(const json& j, TrustedHmdCommonPose& v) {
     v.validity=j.at("validity").get<HmdValidityEvidence>();
     v.common_position=j.at("common_position").get<Vec3>();
     v.common_orientation=j.at("common_orientation").get<QuatXyzw>();
+    if(j.at("protocol")=="monaka.common_world_identity") v.source_publisher_id=j.at("source_publisher_id").get<std::string>(); else v.source_publisher_id.reset();
 }
 void to_json(json& j, const TrustedHmdCommonUnavailable& v) { j=json::object();
     j["version"]=v.version;
@@ -533,7 +542,9 @@ void to_json(json& j, const TrustedHmdCommonUnavailable& v) { j=json::object();
     j["mapping"]=v.mapping;
     j["reason"]=v.reason;
     if(v.validity) j["validity"]=*v.validity; else j["validity"]=nullptr;
+    if(v.source_publisher_id) j["source_publisher_id"]=*v.source_publisher_id;
     j["protocol"]="monaka.common_world"; j["type"]="common_unavailable";
+    if(v.source_publisher_id) j["protocol"]="monaka.common_world_identity";
 }
 void from_json(const json& j, TrustedHmdCommonUnavailable& v) {
     v.version=j.at("version").get<Version>();
@@ -547,6 +558,7 @@ void from_json(const json& j, TrustedHmdCommonUnavailable& v) {
     v.mapping=j.at("mapping").get<CommonMappingReference>();
     v.reason=j.at("reason").get<std::string>();
     if(j.contains("validity") && !j.at("validity").is_null()) v.validity=j.at("validity").get<HmdValidityEvidence>(); else v.validity.reset();
+    if(j.at("protocol")=="monaka.common_world_identity") v.source_publisher_id=j.at("source_publisher_id").get<std::string>(); else v.source_publisher_id.reset();
 }
 void to_json(json& j, const CommonWorldMappingRevocation& v) { j=json::object();
     j["version"]=v.version;
@@ -559,7 +571,9 @@ void to_json(json& j, const CommonWorldMappingRevocation& v) { j=json::object();
     j["timestamp_kind"]=v.timestamp_kind;
     j["mapping"]=v.mapping;
     j["reason"]=v.reason;
+    if(v.source_publisher_id) j["source_publisher_id"]=*v.source_publisher_id;
     j["protocol"]="monaka.common_world"; j["type"]="mapping_revocation";
+    if(v.source_publisher_id) j["protocol"]="monaka.common_world_identity";
 }
 void from_json(const json& j, CommonWorldMappingRevocation& v) {
     v.version=j.at("version").get<Version>();
@@ -572,6 +586,7 @@ void from_json(const json& j, CommonWorldMappingRevocation& v) {
     v.timestamp_kind=j.at("timestamp_kind").get<std::string>();
     v.mapping=j.at("mapping").get<CommonMappingReference>();
     v.reason=j.at("reason").get<std::string>();
+    if(j.at("protocol")=="monaka.common_world_identity") v.source_publisher_id=j.at("source_publisher_id").get<std::string>(); else v.source_publisher_id.reset();
 }
 void to_json(json& j, const CommonWorldRevocation& v) { j=json::object();
     j["version"]=v.version;
@@ -584,7 +599,9 @@ void to_json(json& j, const CommonWorldRevocation& v) { j=json::object();
     j["timestamp_kind"]=v.timestamp_kind;
     j["world"]=v.world;
     j["reason"]=v.reason;
+    if(v.source_publisher_id) j["source_publisher_id"]=*v.source_publisher_id;
     j["protocol"]="monaka.common_world"; j["type"]="world_revocation";
+    if(v.source_publisher_id) j["protocol"]="monaka.common_world_identity";
 }
 void from_json(const json& j, CommonWorldRevocation& v) {
     v.version=j.at("version").get<Version>();
@@ -597,4 +614,5 @@ void from_json(const json& j, CommonWorldRevocation& v) {
     v.timestamp_kind=j.at("timestamp_kind").get<std::string>();
     v.world=j.at("world").get<CommonWorldReference>();
     v.reason=j.at("reason").get<std::string>();
+    if(j.at("protocol")=="monaka.common_world_identity") v.source_publisher_id=j.at("source_publisher_id").get<std::string>(); else v.source_publisher_id.reset();
 }

@@ -450,7 +450,9 @@ internal fun CommonWorldAuthorityPublication.toJson(): JsonObject = JsonObject()
     j.add("timestamp_kind", gson.toJsonTree(timestamp_kind))
     j.add("world", world.toJson())
     j.add("anchor_source", anchor_source.toJson())
+    if(source_publisher_id != null) j.addProperty("source_publisher_id", source_publisher_id)
     j.addProperty("protocol", "monaka.common_world"); j.addProperty("type", "world_authority")
+    if(source_publisher_id != null) j.addProperty("protocol", "monaka.common_world_identity")
 }
 internal fun readCommonWorldAuthorityPublication(j: JsonObject): CommonWorldAuthorityPublication = CommonWorldAuthorityPublication(
     version = readVersion(j.get("version").asJsonObject),
@@ -463,6 +465,7 @@ internal fun readCommonWorldAuthorityPublication(j: JsonObject): CommonWorldAuth
     timestamp_kind = j.get("timestamp_kind").asString,
     world = readCommonWorldReference(j.get("world").asJsonObject),
     anchor_source = readSourceSpaceAuthority(j.get("anchor_source").asJsonObject),
+    source_publisher_id = if(j["protocol"].asString=="monaka.common_world_identity") j["source_publisher_id"].asString else null,
 )
 internal fun CommonWorldMappingPublication.toJson(): JsonObject = JsonObject().also { j ->
     j.add("version", version.toJson())
@@ -475,7 +478,9 @@ internal fun CommonWorldMappingPublication.toJson(): JsonObject = JsonObject().a
     j.add("timestamp_kind", gson.toJsonTree(timestamp_kind))
     j.add("mapping", mapping.toJson())
     j.add("transform", transform.toJson())
+    if(source_publisher_id != null) j.addProperty("source_publisher_id", source_publisher_id)
     j.addProperty("protocol", "monaka.common_world"); j.addProperty("type", "mapping_publication")
+    if(source_publisher_id != null) j.addProperty("protocol", "monaka.common_world_identity")
 }
 internal fun readCommonWorldMappingPublication(j: JsonObject): CommonWorldMappingPublication = CommonWorldMappingPublication(
     version = readVersion(j.get("version").asJsonObject),
@@ -488,6 +493,7 @@ internal fun readCommonWorldMappingPublication(j: JsonObject): CommonWorldMappin
     timestamp_kind = j.get("timestamp_kind").asString,
     mapping = readCommonMappingReference(j.get("mapping").asJsonObject),
     transform = readRigidTransform(j.get("transform").asJsonObject),
+    source_publisher_id = if(j["protocol"].asString=="monaka.common_world_identity") j["source_publisher_id"].asString else null,
 )
 internal fun TrustedHmdCommonPose.toJson(): JsonObject = JsonObject().also { j ->
     j.add("version", version.toJson())
@@ -505,7 +511,9 @@ internal fun TrustedHmdCommonPose.toJson(): JsonObject = JsonObject().also { j -
     j.add("validity", validity.toJson())
     j.add("common_position", gson.toJsonTree(common_position))
     j.add("common_orientation", gson.toJsonTree(common_orientation))
+    if(source_publisher_id != null) j.addProperty("source_publisher_id", source_publisher_id)
     j.addProperty("protocol", "monaka.common_world"); j.addProperty("type", "common_pose")
+    if(source_publisher_id != null) j.addProperty("protocol", "monaka.common_world_identity")
 }
 internal fun readTrustedHmdCommonPose(j: JsonObject): TrustedHmdCommonPose = TrustedHmdCommonPose(
     version = readVersion(j.get("version").asJsonObject),
@@ -523,6 +531,7 @@ internal fun readTrustedHmdCommonPose(j: JsonObject): TrustedHmdCommonPose = Tru
     validity = readHmdValidityEvidence(j.get("validity").asJsonObject),
     common_position = j.get("common_position").asJsonArray.map { it.asDouble },
     common_orientation = j.get("common_orientation").asJsonArray.map { it.asDouble },
+    source_publisher_id = if(j["protocol"].asString=="monaka.common_world_identity") j["source_publisher_id"].asString else null,
 )
 internal fun TrustedHmdCommonUnavailable.toJson(): JsonObject = JsonObject().also { j ->
     j.add("version", version.toJson())
@@ -536,7 +545,9 @@ internal fun TrustedHmdCommonUnavailable.toJson(): JsonObject = JsonObject().als
     j.add("mapping", mapping.toJson())
     j.add("reason", gson.toJsonTree(reason))
     j.add("validity", validity?.toJson())
+    if(source_publisher_id != null) j.addProperty("source_publisher_id", source_publisher_id)
     j.addProperty("protocol", "monaka.common_world"); j.addProperty("type", "common_unavailable")
+    if(source_publisher_id != null) j.addProperty("protocol", "monaka.common_world_identity")
 }
 internal fun readTrustedHmdCommonUnavailable(j: JsonObject): TrustedHmdCommonUnavailable = TrustedHmdCommonUnavailable(
     version = readVersion(j.get("version").asJsonObject),
@@ -550,6 +561,7 @@ internal fun readTrustedHmdCommonUnavailable(j: JsonObject): TrustedHmdCommonUna
     mapping = readCommonMappingReference(j.get("mapping").asJsonObject),
     reason = j.get("reason").asString,
     validity = if (!j.has("validity") || j.get("validity").isJsonNull) null else readHmdValidityEvidence(j.get("validity").asJsonObject),
+    source_publisher_id = if(j["protocol"].asString=="monaka.common_world_identity") j["source_publisher_id"].asString else null,
 )
 internal fun CommonWorldMappingRevocation.toJson(): JsonObject = JsonObject().also { j ->
     j.add("version", version.toJson())
@@ -562,7 +574,9 @@ internal fun CommonWorldMappingRevocation.toJson(): JsonObject = JsonObject().al
     j.add("timestamp_kind", gson.toJsonTree(timestamp_kind))
     j.add("mapping", mapping.toJson())
     j.add("reason", gson.toJsonTree(reason))
+    if(source_publisher_id != null) j.addProperty("source_publisher_id", source_publisher_id)
     j.addProperty("protocol", "monaka.common_world"); j.addProperty("type", "mapping_revocation")
+    if(source_publisher_id != null) j.addProperty("protocol", "monaka.common_world_identity")
 }
 internal fun readCommonWorldMappingRevocation(j: JsonObject): CommonWorldMappingRevocation = CommonWorldMappingRevocation(
     version = readVersion(j.get("version").asJsonObject),
@@ -575,6 +589,7 @@ internal fun readCommonWorldMappingRevocation(j: JsonObject): CommonWorldMapping
     timestamp_kind = j.get("timestamp_kind").asString,
     mapping = readCommonMappingReference(j.get("mapping").asJsonObject),
     reason = j.get("reason").asString,
+    source_publisher_id = if(j["protocol"].asString=="monaka.common_world_identity") j["source_publisher_id"].asString else null,
 )
 internal fun CommonWorldRevocation.toJson(): JsonObject = JsonObject().also { j ->
     j.add("version", version.toJson())
@@ -587,7 +602,9 @@ internal fun CommonWorldRevocation.toJson(): JsonObject = JsonObject().also { j 
     j.add("timestamp_kind", gson.toJsonTree(timestamp_kind))
     j.add("world", world.toJson())
     j.add("reason", gson.toJsonTree(reason))
+    if(source_publisher_id != null) j.addProperty("source_publisher_id", source_publisher_id)
     j.addProperty("protocol", "monaka.common_world"); j.addProperty("type", "world_revocation")
+    if(source_publisher_id != null) j.addProperty("protocol", "monaka.common_world_identity")
 }
 internal fun readCommonWorldRevocation(j: JsonObject): CommonWorldRevocation = CommonWorldRevocation(
     version = readVersion(j.get("version").asJsonObject),
@@ -600,4 +617,5 @@ internal fun readCommonWorldRevocation(j: JsonObject): CommonWorldRevocation = C
     timestamp_kind = j.get("timestamp_kind").asString,
     world = readCommonWorldReference(j.get("world").asJsonObject),
     reason = j.get("reason").asString,
+    source_publisher_id = if(j["protocol"].asString=="monaka.common_world_identity") j["source_publisher_id"].asString else null,
 )

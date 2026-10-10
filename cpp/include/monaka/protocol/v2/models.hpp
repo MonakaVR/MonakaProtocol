@@ -234,6 +234,7 @@ struct CommonWorldAuthorityPublication {
     std::string timestamp_kind{};
     CommonWorldReference world{};
     SourceSpaceAuthority anchor_source{};
+    std::optional<std::string> source_publisher_id{};
 };
 struct CommonWorldMappingPublication {
     Version version{};
@@ -246,6 +247,7 @@ struct CommonWorldMappingPublication {
     std::string timestamp_kind{};
     CommonMappingReference mapping{};
     RigidTransform transform{};
+    std::optional<std::string> source_publisher_id{};
 };
 struct TrustedHmdCommonPose {
     Version version{};
@@ -263,6 +265,7 @@ struct TrustedHmdCommonPose {
     HmdValidityEvidence validity{};
     Vec3 common_position{};
     QuatXyzw common_orientation{};
+    std::optional<std::string> source_publisher_id{};
 };
 struct TrustedHmdCommonUnavailable {
     Version version{};
@@ -276,6 +279,7 @@ struct TrustedHmdCommonUnavailable {
     CommonMappingReference mapping{};
     std::string reason{};
     std::optional<HmdValidityEvidence> validity{};
+    std::optional<std::string> source_publisher_id{};
 };
 struct CommonWorldMappingRevocation {
     Version version{};
@@ -288,6 +292,7 @@ struct CommonWorldMappingRevocation {
     std::string timestamp_kind{};
     CommonMappingReference mapping{};
     std::string reason{};
+    std::optional<std::string> source_publisher_id{};
 };
 struct CommonWorldRevocation {
     Version version{};
@@ -300,6 +305,8 @@ struct CommonWorldRevocation {
     std::string timestamp_kind{};
     CommonWorldReference world{};
     std::string reason{};
+    std::optional<std::string> source_publisher_id{};
 };
 using Envelope = std::variant<TrackerObservation,ObservationDeviceState,MtpPose,MtpTrackerState,TrustedHmdSourceAuthority,TrustedHmdSourcePose,TrustedHmdSourceUnavailable,TrustedHmdSourceRevocation,CommonWorldAuthorityPublication,CommonWorldMappingPublication,TrustedHmdCommonPose,TrustedHmdCommonUnavailable,CommonWorldMappingRevocation,CommonWorldRevocation>;
 }
+namespace monaka::protocol::v2 { inline constexpr Version PublisherIdentityWireVersion{2,2}; inline constexpr const char* PublisherIdentityProtocol = "monaka.common_world_identity"; }

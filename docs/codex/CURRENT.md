@@ -33,3 +33,9 @@ Do not infer modality from legacy numeric fields and do not generate a synthetic
 ## Resume rule
 
 A fresh Codex session should first verify the branch HEAD and read this file, `docs/architecture-revision.md`, and `docs/C2.md` before making changes. It should not restart from the old Task 1 bootstrap plan or downgrade the runtime contract to C1/v1.
+# Phase 2B-5AI-P precedence
+
+The explicitly authorized Phase 2B-5AI-P instruction adds C2.2 publisher-bound
+Common World messages. Read `docs/C2.2.md` alongside C2.1. Historical C2.1 wire
+and fixtures remain unchanged; nullable model publisher denotes legacy only.
+Production receiver runtime and real trusted source producer remain pending.

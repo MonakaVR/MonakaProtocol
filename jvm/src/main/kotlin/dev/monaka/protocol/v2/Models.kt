@@ -249,6 +249,7 @@ data class CommonWorldAuthorityPublication(
     val timestamp_kind: String,
     val world: CommonWorldReference,
     val anchor_source: SourceSpaceAuthority,
+    val source_publisher_id: String? = null,
 ) : Envelope
 
 data class CommonWorldMappingPublication(
@@ -262,6 +263,7 @@ data class CommonWorldMappingPublication(
     val timestamp_kind: String,
     val mapping: CommonMappingReference,
     val transform: RigidTransform,
+    val source_publisher_id: String? = null,
 ) : Envelope
 
 data class TrustedHmdCommonPose(
@@ -280,6 +282,7 @@ data class TrustedHmdCommonPose(
     val validity: HmdValidityEvidence,
     val common_position: List<Double>,
     val common_orientation: List<Double>,
+    val source_publisher_id: String? = null,
 ) : Envelope
 
 data class TrustedHmdCommonUnavailable(
@@ -294,6 +297,7 @@ data class TrustedHmdCommonUnavailable(
     val mapping: CommonMappingReference,
     val reason: String,
     val validity: HmdValidityEvidence?,
+    val source_publisher_id: String? = null,
 ) : Envelope
 
 data class CommonWorldMappingRevocation(
@@ -307,6 +311,7 @@ data class CommonWorldMappingRevocation(
     val timestamp_kind: String,
     val mapping: CommonMappingReference,
     val reason: String,
+    val source_publisher_id: String? = null,
 ) : Envelope
 
 data class CommonWorldRevocation(
@@ -320,4 +325,7 @@ data class CommonWorldRevocation(
     val timestamp_kind: String,
     val world: CommonWorldReference,
     val reason: String,
+    val source_publisher_id: String? = null,
 ) : Envelope
+
+object PublisherIdentityWire { const val MAJOR = 2; const val MINOR = 2; const val PROTOCOL = "monaka.common_world_identity" }

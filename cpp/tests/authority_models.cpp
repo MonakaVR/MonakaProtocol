@@ -12,6 +12,16 @@ int main(int argc,char** argv) {
     Envelope value; Error error;
     check(DecodeEnvelope(reinterpret_cast<const uint8_t*>(raw.data()),raw.size(),value,error));
     auto original=std::get<TrustedHmdCommonPose>(value);
+    check(!original.source_publisher_id);
+    auto bound=original; bound.version={2,2}; bound.source_publisher_id="Canonical.Publisher-A";
+    check(EncodeEnvelope(bound,encoded,error));
+    check(DecodeEnvelope(reinterpret_cast<const uint8_t*>(encoded.data()),encoded.size(),value,error));
+    check(std::get<TrustedHmdCommonPose>(value).source_publisher_id==bound.source_publisher_id);
+    auto incompatible=bound; incompatible.version.minor=1;
+    encoded="unchanged";
+    check(!EncodeEnvelope(incompatible,encoded,error) && error.code==ErrorCode::UnsupportedVersion && encoded=="unchanged");
+    incompatible=bound; incompatible.source_publisher_id="";
+    check(!EncodeEnvelope(incompatible,encoded,error) && error.code==ErrorCode::OutOfRange && encoded=="unchanged");
     for(auto x:{std::numeric_limits<double>::quiet_NaN(),std::numeric_limits<double>::infinity()}) {
         auto bad=original; bad.source_position[0]=x;
         check(!EncodeEnvelope(bad,encoded,error) && error.code==ErrorCode::OutOfRange && encoded=="unchanged");

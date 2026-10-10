@@ -15,7 +15,7 @@ R = Path(__file__).resolve().parents[1]
 p = argparse.ArgumentParser()
 p.add_argument('--cmake', default='cmake')
 p.add_argument('--wire-major', type=int, choices=[1, 2], default=1)
-p.add_argument('--wire-minor', type=int, choices=[0, 1], default=0)
+p.add_argument('--wire-minor', type=int, choices=[0, 1, 2], default=0)
 a = p.parse_args()
 
 def sha(b):
@@ -24,7 +24,7 @@ def sha(b):
 major = a.wire_major
 minor = a.wire_minor
 require(not minor or major==2, 'minor 1 requires major 2')
-dist = R / 'dist' if major == 1 else R / ('dist/v2.1' if minor else 'dist/v2')
+dist = R / 'dist' if major == 1 else R / (f'dist/v2.{minor}' if minor else 'dist/v2')
 manifest = json.loads((dist / 'handoff-manifest.json').read_text())
 archive = dist / manifest['artifact']
 require(manifest['wire_version'] == {'major': major, 'minor': minor}, 'manifest version mismatch')
@@ -37,6 +37,9 @@ message_paths=[f'{fixture_root}/{name}.json' for name in message_names]
 if minor:
     from fixtures_v21 import valid
     message_paths += [f'fixtures/v2.1/valid/{n}.json' for n in valid()]
+if minor==2:
+    from fixtures_v22 import vectors
+    message_paths += [f'fixtures/v2.2/valid/{n}.json' for n in vectors()]
 
 with tempfile.TemporaryDirectory(prefix=f'monaka-kit-v{major}-') as directory:
     w = Path(directory)
@@ -103,7 +106,7 @@ public class Consumer {{
         run(['java', '-cp', '.' + os.pathsep + cp, 'Consumer', kit / name])
 
 print(f'PASS v{major}.{minor} external ZIP hash, internal file/lock/dependency hashes and isolated C++/JVM consumers ({len(message_paths)} messages each)')
-(R / f'build/kit-verification-v{major}{"1" if minor else ""}.json').write_text(json.dumps({
+(R / f'build/kit-verification-v{major}{minor if minor else ""}.json').write_text(json.dumps({
     'status': 'PASS',
     'wire_version': {'major': major, 'minor': minor},
     'sha256': manifest['sha256'],
