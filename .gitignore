@@ -1,0 +1,20 @@
+# IDE / editor
+.vs/
+.idea/
+*.user
+*.suo
+
+# Build outputs
+bin/
+obj/
+build/
+out/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Local environment
+.env
+.env.*
+!.env.example
