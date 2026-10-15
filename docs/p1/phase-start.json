@@ -1,0 +1,50 @@
+{
+  "base_mvip": "cad72656f6e90def6dc55ee4c20fe9a181d37baf",
+  "base_mbip": "e334bfeceb7f922b3cacfc0d17eace82c0fabf33",
+  "frozen_reference": "0b4a27c2e2de88705c92fb6dbf5a8d9ca752bf39",
+  "instruction_sha256": "411d40b7c3c15dfdb312ffd7e33f1dcd898d89d77b7f94f10219d9058e9fdcb8",
+  "p0_report_sha256": "5ed80d135a9e3a76c835d2312f7ce9d58b749e397e465190b2fc6b0c561f200c",
+  "p0_targets_sha256": "3b4c9cdc1aced71ca5892f67bd08992456a36faf5e5b5ab002998e17231d2542",
+  "states": [
+    {
+      "role": "audit",
+      "path": "C:\\Users\\nynyp\\Downloads\\6Dof\\MonakaVRInputProtocol",
+      "remote": "https://github.com/MonakaVR/MonakaVRInputProtocol.git",
+      "branch": "feature/common-world-publisher-identity-wire-v2.2",
+      "head": "0b4a27c2e2de88705c92fb6dbf5a8d9ca752bf39",
+      "origin_dev": "cad72656f6e90def6dc55ee4c20fe9a181d37baf",
+      "status": "",
+      "git_common_dir": "C:/Users/nynyp/Downloads/6Dof/MonakaVRInputProtocol/.git"
+    },
+    {
+      "role": "audit",
+      "path": "C:\\Users\\nynyp\\Downloads\\6Dof\\MonakaBridgeInputProtocol",
+      "remote": "https://github.com/MonakaVR/MonakaBridgeInputProtocol.git",
+      "branch": "dev",
+      "head": "e334bfeceb7f922b3cacfc0d17eace82c0fabf33",
+      "origin_dev": "e334bfeceb7f922b3cacfc0d17eace82c0fabf33",
+      "status": "",
+      "git_common_dir": "C:/Users/nynyp/Downloads/6Dof/MonakaBridgeInputProtocol/.git"
+    },
+    {
+      "role": "development",
+      "path": "C:\\Users\\nynyp\\Downloads\\6Dof\\development\\MonakaVRInputProtocol",
+      "remote": "https://github.com/MonakaVR/MonakaVRInputProtocol.git",
+      "branch": "fix/capabilities-contract-reconciliation-v2c-p1",
+      "head": "cad72656f6e90def6dc55ee4c20fe9a181d37baf",
+      "origin_dev": "cad72656f6e90def6dc55ee4c20fe9a181d37baf",
+      "status": "?? docs/p1/\n?? tools/",
+      "git_common_dir": "C:/Users/nynyp/Downloads/6Dof/development/MonakaVRInputProtocol/.git"
+    },
+    {
+      "role": "development",
+      "path": "C:\\Users\\nynyp\\Downloads\\6Dof\\development\\MonakaBridgeInputProtocol",
+      "remote": "https://github.com/MonakaVR/MonakaBridgeInputProtocol.git",
+      "branch": "fix/capabilities-contract-reconciliation-v2c-p1",
+      "head": "e334bfeceb7f922b3cacfc0d17eace82c0fabf33",
+      "origin_dev": "e334bfeceb7f922b3cacfc0d17eace82c0fabf33",
+      "status": "",
+      "git_common_dir": "C:/Users/nynyp/Downloads/6Dof/development/MonakaBridgeInputProtocol/.git"
+    }
+  ]
+}
