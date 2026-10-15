@@ -39,9 +39,9 @@ Projection ProjectCapabilities(const wire::Envelope& message){
             if constexpr(pose){
                 set(Capability::Position,m.position.has_value(),m.validity.position);
                 set(Capability::Orientation,m.orientation.has_value(),m.validity.orientation);
-                set(Capability::LinearVelocity,m.linear_velocity.has_value(),m.linear_velocity.has_value());
-                set(Capability::AngularVelocity,m.angular_velocity.has_value(),m.angular_velocity.has_value());
-                set(Capability::LinearAcceleration,m.linear_acceleration.has_value(),m.linear_acceleration.has_value());
+                set(Capability::LinearVelocity,m.linear_velocity.has_value(),m.linear_velocity.has_value()&&m.validity.position);
+                set(Capability::AngularVelocity,m.angular_velocity.has_value(),m.angular_velocity.has_value()&&m.validity.orientation);
+                set(Capability::LinearAcceleration,m.linear_acceleration.has_value(),m.linear_acceleration.has_value()&&m.validity.position);
             }
             if constexpr(!std::is_same_v<T,wire::MtpPose>){
                 set(Capability::BatteryFraction,m.battery&&m.battery->fraction.has_value(),m.battery&&m.battery->fraction.has_value());

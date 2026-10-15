@@ -43,16 +43,21 @@ merely decoded/re-encoded by the legacy codec.
 |---|---|
 | position | pose `validity.position`; true requires finite non-null P and advertised support |
 | orientation | pose `validity.orientation`; true requires valid non-null Q and advertised support |
-| linear_velocity | corresponding optional derivative/vector is non-null |
-| angular_velocity | corresponding optional derivative/vector is non-null |
-| linear_acceleration | corresponding optional gravity-free derivative/vector is non-null |
+| linear_velocity | non-null derivative/vector AND effective position validity |
+| angular_velocity | non-null derivative/vector AND effective orientation validity |
+| linear_acceleration | non-null gravity-free derivative/vector AND effective position validity |
 | battery_fraction | battery exists and fraction is non-null (zero is a sample) |
 | charging | battery exists and charging is non-null (false is a sample) |
 
-For derivatives and battery the old wire has no independent validity bit: a
-non-null value is an effective producer-admitted sample, subject to validation
-and the consumer's independent age policy. A producer MUST omit/null an unusable
-optional derivative; it MUST retain its capability. P/Q with false validity MAY
+The old wire has no independent derivative validity bit. This conservative
+projection retains the frozen Bridge's parent-validity gates: velocity/linear
+acceleration require usable P, angular velocity requires usable Q. A residual
+non-null derivative during parent loss is diagnostic INVALID, not usable just
+because a field exists. Independent derivative validity without its parent
+requires a future model decision, not a guessed flag. Battery uses non-null
+metadata independently. All usable samples remain subject to external freshness.
+A producer SHOULD omit/null an unusable optional derivative; it MUST retain its
+capability. P/Q with false validity MAY
 retain finite diagnostic numbers, which MUST NOT be consumed as usable channels.
 Unsupported diagnostic P/Q does not establish support. Non-null derivatives
 without support remain codec errors. Metadata MUST NOT create/refresh a P/Q sample.

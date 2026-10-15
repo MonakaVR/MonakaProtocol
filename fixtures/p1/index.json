@@ -58,6 +58,17 @@
     }
   },
   {
+    "file": "loss-retained-derivative-diagnostics.json",
+    "error": null,
+    "states": {
+      "position": "INVALID",
+      "orientation": "INVALID",
+      "linear_velocity": "INVALID",
+      "angular_velocity": "INVALID",
+      "linear_acceleration": "INVALID"
+    }
+  },
+  {
     "file": "unknown-capability.json",
     "error": "UnsupportedValue",
     "states": null

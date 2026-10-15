@@ -47,7 +47,7 @@ object CapabilityContract {
         val caps = CapabilitySet(fields.tokens)
         val present = listOf(fields.p, fields.q, fields.v, fields.w, fields.a,
             fields.battery?.fraction != null, fields.battery?.charging != null)
-        val valid = listOf(fields.pv, fields.qv, fields.v, fields.w, fields.a, present[5], present[6])
+        val valid = listOf(fields.pv, fields.qv, fields.v && fields.pv, fields.w && fields.qv, fields.a && fields.pv, present[5], present[6])
         val channels = Capability.entries.associateWith { c ->
             Channel(c in caps.values, present[c.ordinal], c in caps.values && valid[c.ordinal])
         }

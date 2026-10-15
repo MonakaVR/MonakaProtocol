@@ -19,6 +19,7 @@ m=obs();m['linear_velocity']=None;put('supported-optional-absent',m,dict(positio
 m=obs();m.update(capabilities=['orientation'],validity=dict(position=False,orientation=True),modality='rotation_only',tracking_state='degraded',linear_velocity=None);put('unsupported-position-diagnostic',m,dict(orientation='VALID'))
 m=obs();m.update(capabilities=[],validity=dict(position=False,orientation=False),modality='none',tracking_state='lost',orientation_evidence='none',linear_velocity=None);put('empty-no-support',m,{})
 m=obs();m['capabilities']=['linear_velocity','orientation','position'];put('set-order-reversed',m,dict(position='VALID',orientation='VALID',linear_velocity='VALID'))
+m=obs();m.update(capabilities=tokens[:5],validity=dict(position=False,orientation=False),modality='none',tracking_state='lost',orientation_evidence='none',angular_velocity={'value':[0.,0.,0.],'frame':'space','evidence':'measured'},linear_acceleration={'value':[0.,0.,0.],'frame':'space','evidence':'measured'});put('loss-retained-derivative-diagnostics',m,{t:'INVALID' for t in tokens[:5]})
 m=obs();m['capabilities'].append('raw_gyro');put('unknown-capability',m,error='UnsupportedValue')
 m=obs();m['capabilities'].append('position');put('duplicate-capability',m,error='InconsistentValidity')
 m=obs();m['capabilities']=['position','orientation'];put('unsupported-derivative',m,error='InconsistentValidity')
