@@ -1,0 +1,219 @@
+{
+  "source_commit": "0b4a27c2e2de88705c92fb6dbf5a8d9ca752bf39",
+  "p0_native_results_sha256": "e64bffe0bbe896274a8d30f2b36c818dbe8f7d814d3af63e907e55ab3443c183",
+  "p0_jvm_results_sha256": "422137455446b8935556c86dc899ea79bda6339a2f19665af1bdf94e214383f5",
+  "hashes": {
+    "v2/observation.json": {
+      "0": "3d853c2790f5e4ab2ccca56ae76401deb0b218051224f28b0b8efe2467247f58",
+      "1": "3d853c2790f5e4ab2ccca56ae76401deb0b218051224f28b0b8efe2467247f58"
+    },
+    "v2/observation-rotation_only.json": {
+      "0": "87ff4cf9d3dc4ff2fc7c7e11e283a0e103b9068f0ecc84dcb84d734132a3cd94",
+      "1": "87ff4cf9d3dc4ff2fc7c7e11e283a0e103b9068f0ecc84dcb84d734132a3cd94"
+    },
+    "v2/observation-none.json": {
+      "0": "fd12acd9adfe43483fc79d9e87e34e8a6b4e02fa61e93f6198065fb60009af89",
+      "1": "fd12acd9adfe43483fc79d9e87e34e8a6b4e02fa61e93f6198065fb60009af89"
+    },
+    "v2/observation-battery-boundary.json": {
+      "0": "8612968d65818c7511ca8de6d62b2b89eb3a4a3688d096f0b678862e03ab650a",
+      "1": "8612968d65818c7511ca8de6d62b2b89eb3a4a3688d096f0b678862e03ab650a"
+    },
+    "v2/device-state.json": {
+      "0": "1b263b5a9e11180e86b9d458f8d9ebbfa84ed00435222a32d955437463c24723",
+      "1": "1b263b5a9e11180e86b9d458f8d9ebbfa84ed00435222a32d955437463c24723"
+    },
+    "v2/device-state-battery-boundary.json": {
+      "0": "d77145c98a51718c7fb91477fcfc9c110996bc6757fc0308b988e8e05e6b1152",
+      "1": "d77145c98a51718c7fb91477fcfc9c110996bc6757fc0308b988e8e05e6b1152"
+    },
+    "v2/mtp-pose.json": {
+      "0": "7f561cc17bb65e0e6e35dccfe814047402b3442b5086af029c03a049dd7ea2f4",
+      "1": "7f561cc17bb65e0e6e35dccfe814047402b3442b5086af029c03a049dd7ea2f4"
+    },
+    "v2/mtp-pose-rotation_only.json": {
+      "0": "72eb11df254c4fc587ff7449455c60c29bdeb7ac4c018618f43c30e892ddb81d",
+      "1": "72eb11df254c4fc587ff7449455c60c29bdeb7ac4c018618f43c30e892ddb81d"
+    },
+    "v2/mtp-pose-none.json": {
+      "0": "d31c57882ccecef23c68763b623907b923fe9d1b6d36d304767fcd2e8639b74a",
+      "1": "d31c57882ccecef23c68763b623907b923fe9d1b6d36d304767fcd2e8639b74a"
+    },
+    "v2/tracker-state.json": {
+      "0": "d7efa22f691e4fe0b6ddf9ac7e3df0c931ebb070ec1e56e9810c3f7611203e75",
+      "1": "d7efa22f691e4fe0b6ddf9ac7e3df0c931ebb070ec1e56e9810c3f7611203e75"
+    },
+    "v2/tracker-state-battery-boundary.json": {
+      "0": "0f8ed92ef888a227290618751f095aaf9585a9eda071dfd26374021d58e5f3a9",
+      "1": "0f8ed92ef888a227290618751f095aaf9585a9eda071dfd26374021d58e5f3a9"
+    },
+    "v2.1/valid/source-authority.json": {
+      "0": "59ec593c2cdc38c8ea32cba4bd8f00061b69ff718ccb85d3542cb61e6b06f0ba",
+      "1": "59ec593c2cdc38c8ea32cba4bd8f00061b69ff718ccb85d3542cb61e6b06f0ba"
+    },
+    "v2.1/valid/source-pose.json": {
+      "0": "7f89d39d11b31be5f8891f44448e584d30fb2348fac30e2649c3caaa5b1c1f5f",
+      "1": "7f89d39d11b31be5f8891f44448e584d30fb2348fac30e2649c3caaa5b1c1f5f"
+    },
+    "v2.1/valid/source-unavailable.json": {
+      "0": "7dff92f1ef6893ba090649abf9c0824a796491fa2cf33b69a55b064f19c69203",
+      "1": "7dff92f1ef6893ba090649abf9c0824a796491fa2cf33b69a55b064f19c69203"
+    },
+    "v2.1/valid/source-revocation.json": {
+      "0": "5ae2a9ddc0f22bcf9821de447b7b7b9fdd7821af6f3434cbca9ca4e46d1aff20",
+      "1": "5ae2a9ddc0f22bcf9821de447b7b7b9fdd7821af6f3434cbca9ca4e46d1aff20"
+    },
+    "v2.1/valid/world-authority.json": {
+      "0": "5d74a847eabd5ea81e99e106adb0e8e4b0e98a646e4f1d313fdb017a5aa6574f",
+      "1": "5d74a847eabd5ea81e99e106adb0e8e4b0e98a646e4f1d313fdb017a5aa6574f"
+    },
+    "v2.1/valid/world-mapping.json": {
+      "0": "42620327de2d9904b836ed1add44594aba8fb6d0aa4256ce2c1a9c5770c8a81a",
+      "1": "42620327de2d9904b836ed1add44594aba8fb6d0aa4256ce2c1a9c5770c8a81a"
+    },
+    "v2.1/valid/common-hmd-pose.json": {
+      "0": "d70ba32459f8d1c4deb44a90cad676405f786cc4f28014e3acc7ee0d46ab7e65",
+      "1": "d70ba32459f8d1c4deb44a90cad676405f786cc4f28014e3acc7ee0d46ab7e65"
+    },
+    "v2.1/valid/common-hmd-unavailable.json": {
+      "0": "263f2e672f19aa9036808ecc0ead10b0c35ed83cad14676d4b773ead20ddddc0",
+      "1": "263f2e672f19aa9036808ecc0ead10b0c35ed83cad14676d4b773ead20ddddc0"
+    },
+    "v2.1/valid/mapping-revocation.json": {
+      "0": "fb4cf8add7781581e97a53180f2fe6e32be97f7974d1fe83e28a19873b854a15",
+      "1": "fb4cf8add7781581e97a53180f2fe6e32be97f7974d1fe83e28a19873b854a15"
+    },
+    "v2.1/valid/world-revocation.json": {
+      "0": "d83f33808d0462ff3449b178076cfacd0ada7c9d525d79e6c5b054aabcd67f57",
+      "1": "d83f33808d0462ff3449b178076cfacd0ada7c9d525d79e6c5b054aabcd67f57"
+    },
+    "v2.1/valid/sequence-zero.json": {
+      "0": "59ec593c2cdc38c8ea32cba4bd8f00061b69ff718ccb85d3542cb61e6b06f0ba",
+      "1": "59ec593c2cdc38c8ea32cba4bd8f00061b69ff718ccb85d3542cb61e6b06f0ba"
+    },
+    "v2.1/valid/sequence-one.json": {
+      "0": "61bd38d020b76e25aa4fbc52b30d70d860ed931433aecccff782bba710d606e4",
+      "1": "61bd38d020b76e25aa4fbc52b30d70d860ed931433aecccff782bba710d606e4"
+    },
+    "v2.1/valid/sequence-max.json": {
+      "0": "f795d5e4939927b52bf51f3d8cf4aed87101308f4d06914a762de067a8d093af",
+      "1": "f795d5e4939927b52bf51f3d8cf4aed87101308f4d06914a762de067a8d093af"
+    },
+    "v2.1/valid/generation-zero.json": {
+      "0": "59ec593c2cdc38c8ea32cba4bd8f00061b69ff718ccb85d3542cb61e6b06f0ba",
+      "1": "59ec593c2cdc38c8ea32cba4bd8f00061b69ff718ccb85d3542cb61e6b06f0ba"
+    },
+    "v2.1/valid/generation-one.json": {
+      "0": "eab5357780e6e84de3ecdc8ea07ea6b595853ba0f75d8a9c228823563742d29a",
+      "1": "eab5357780e6e84de3ecdc8ea07ea6b595853ba0f75d8a9c228823563742d29a"
+    },
+    "v2.1/valid/generation-max.json": {
+      "0": "502f92a108f730aca010f2fdc2bbb4d8ec741cbdbc809bd979aa8cc26db443c1",
+      "1": "502f92a108f730aca010f2fdc2bbb4d8ec741cbdbc809bd979aa8cc26db443c1"
+    },
+    "v2.1/valid/observation-zero.json": {
+      "0": "7a2aa3ecbf53d4bbdb1b03cdf3a24fdd36084bbb19bbc8731592b38333f50a2e",
+      "1": "7a2aa3ecbf53d4bbdb1b03cdf3a24fdd36084bbb19bbc8731592b38333f50a2e"
+    },
+    "v2.1/valid/observation-one.json": {
+      "0": "d35efe89c32494be943ca05b0eaf39866230848bd0f9809c0309bac48fc7ea54",
+      "1": "d35efe89c32494be943ca05b0eaf39866230848bd0f9809c0309bac48fc7ea54"
+    },
+    "v2.1/valid/observation-max.json": {
+      "0": "2a2b2868b745c800f5632b73f6f4dded78fce21dc2ae537734f1c71342a0d027",
+      "1": "2a2b2868b745c800f5632b73f6f4dded78fce21dc2ae537734f1c71342a0d027"
+    },
+    "v2.1/valid/locate-min.json": {
+      "0": "f54514928ce60fe3935ee01c1e1d865c2fb8552ad7b396369940e7db1b02d927",
+      "1": "f54514928ce60fe3935ee01c1e1d865c2fb8552ad7b396369940e7db1b02d927"
+    },
+    "v2.1/valid/locate-max.json": {
+      "0": "695e0d31491c6e2ec400b653207a342cdd4fb2e2f879b3a922889a6f0be1fd50",
+      "1": "695e0d31491c6e2ec400b653207a342cdd4fb2e2f879b3a922889a6f0be1fd50"
+    },
+    "v2.1/valid/source-authority-future-minor.json": {
+      "0": "59ec593c2cdc38c8ea32cba4bd8f00061b69ff718ccb85d3542cb61e6b06f0ba",
+      "1": "59ec593c2cdc38c8ea32cba4bd8f00061b69ff718ccb85d3542cb61e6b06f0ba"
+    },
+    "v2.1/valid/source-pose-future-minor.json": {
+      "0": "7f89d39d11b31be5f8891f44448e584d30fb2348fac30e2649c3caaa5b1c1f5f",
+      "1": "7f89d39d11b31be5f8891f44448e584d30fb2348fac30e2649c3caaa5b1c1f5f"
+    },
+    "v2.1/valid/source-unavailable-future-minor.json": {
+      "0": "7dff92f1ef6893ba090649abf9c0824a796491fa2cf33b69a55b064f19c69203",
+      "1": "7dff92f1ef6893ba090649abf9c0824a796491fa2cf33b69a55b064f19c69203"
+    },
+    "v2.1/valid/source-revocation-future-minor.json": {
+      "0": "5ae2a9ddc0f22bcf9821de447b7b7b9fdd7821af6f3434cbca9ca4e46d1aff20",
+      "1": "5ae2a9ddc0f22bcf9821de447b7b7b9fdd7821af6f3434cbca9ca4e46d1aff20"
+    },
+    "v2.1/valid/world-authority-future-minor.json": {
+      "0": "5d74a847eabd5ea81e99e106adb0e8e4b0e98a646e4f1d313fdb017a5aa6574f",
+      "1": "5d74a847eabd5ea81e99e106adb0e8e4b0e98a646e4f1d313fdb017a5aa6574f"
+    },
+    "v2.1/valid/world-mapping-future-minor.json": {
+      "0": "42620327de2d9904b836ed1add44594aba8fb6d0aa4256ce2c1a9c5770c8a81a",
+      "1": "42620327de2d9904b836ed1add44594aba8fb6d0aa4256ce2c1a9c5770c8a81a"
+    },
+    "v2.1/valid/common-hmd-pose-future-minor.json": {
+      "0": "d70ba32459f8d1c4deb44a90cad676405f786cc4f28014e3acc7ee0d46ab7e65",
+      "1": "d70ba32459f8d1c4deb44a90cad676405f786cc4f28014e3acc7ee0d46ab7e65"
+    },
+    "v2.1/valid/common-hmd-unavailable-future-minor.json": {
+      "0": "263f2e672f19aa9036808ecc0ead10b0c35ed83cad14676d4b773ead20ddddc0",
+      "1": "263f2e672f19aa9036808ecc0ead10b0c35ed83cad14676d4b773ead20ddddc0"
+    },
+    "v2.1/valid/mapping-revocation-future-minor.json": {
+      "0": "fb4cf8add7781581e97a53180f2fe6e32be97f7974d1fe83e28a19873b854a15",
+      "1": "fb4cf8add7781581e97a53180f2fe6e32be97f7974d1fe83e28a19873b854a15"
+    },
+    "v2.1/valid/world-revocation-future-minor.json": {
+      "0": "d83f33808d0462ff3449b178076cfacd0ada7c9d525d79e6c5b054aabcd67f57",
+      "1": "d83f33808d0462ff3449b178076cfacd0ada7c9d525d79e6c5b054aabcd67f57"
+    },
+    "v2.1/valid/unknown-field.json": {
+      "0": "59ec593c2cdc38c8ea32cba4bd8f00061b69ff718ccb85d3542cb61e6b06f0ba",
+      "1": "59ec593c2cdc38c8ea32cba4bd8f00061b69ff718ccb85d3542cb61e6b06f0ba"
+    },
+    "v2.1/valid/source-pose-negative-q.json": {
+      "0": "7d4469a579976b6c0d3bd96cb8e1e8843c4eeec3503a4b890db25baf1a37c993",
+      "1": "7d4469a579976b6c0d3bd96cb8e1e8843c4eeec3503a4b890db25baf1a37c993"
+    },
+    "v2.1/valid/source-unavailable-unknown-flags.json": {
+      "0": "16ab41910019502acffdb5bc3e4fb5f2701b80e1ce3802b4a0ce2d345225421c",
+      "1": "16ab41910019502acffdb5bc3e4fb5f2701b80e1ce3802b4a0ce2d345225421c"
+    },
+    "v2.1/valid/nested-future-field.json": {
+      "0": "d70ba32459f8d1c4deb44a90cad676405f786cc4f28014e3acc7ee0d46ab7e65",
+      "1": "d70ba32459f8d1c4deb44a90cad676405f786cc4f28014e3acc7ee0d46ab7e65"
+    },
+    "v2.2/valid/world-authority.json": {
+      "0": "63d58ad36d1e35d805b10ce7b9672db0b19106ab38e0fbe534789165d6e0d15a",
+      "1": "63d58ad36d1e35d805b10ce7b9672db0b19106ab38e0fbe534789165d6e0d15a"
+    },
+    "v2.2/valid/world-mapping.json": {
+      "0": "63ccf2505310b22073160222837032bf47fa0b882a13213fa5fbd6a600553fad",
+      "1": "63ccf2505310b22073160222837032bf47fa0b882a13213fa5fbd6a600553fad"
+    },
+    "v2.2/valid/common-hmd-pose.json": {
+      "0": "b541c51f3e25f522eb78e74617f1f96a82e0ab8e10241455a4799666552fb3f3",
+      "1": "b541c51f3e25f522eb78e74617f1f96a82e0ab8e10241455a4799666552fb3f3"
+    },
+    "v2.2/valid/common-hmd-unavailable.json": {
+      "0": "c87d6a4234a555aa6de972a652cca77fa7aa4e6f3b9a4535b4132796acb199a2",
+      "1": "c87d6a4234a555aa6de972a652cca77fa7aa4e6f3b9a4535b4132796acb199a2"
+    },
+    "v2.2/valid/mapping-revocation.json": {
+      "0": "040a9e756387f0d90236bdda6baf514499f45f2393a59dd4c6a0eaae3391f4bd",
+      "1": "040a9e756387f0d90236bdda6baf514499f45f2393a59dd4c6a0eaae3391f4bd"
+    },
+    "v2.2/valid/world-revocation.json": {
+      "0": "d6c2d16eb31257dcf8ede34da61a7c1e247355b4475818f50296d93ba0641bd4",
+      "1": "d6c2d16eb31257dcf8ede34da61a7c1e247355b4475818f50296d93ba0641bd4"
+    },
+    "v2.2/valid/publisher-B.json": {
+      "0": "c5bc2326ddf58cd9dc333badb6159461cce8e146a7e6550e2892973c6c1311da",
+      "1": "c5bc2326ddf58cd9dc333badb6159461cce8e146a7e6550e2892973c6c1311da"
+    }
+  }
+}
